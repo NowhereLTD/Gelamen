@@ -1,6 +1,6 @@
-import {PathQLTypeError} from "/src/PathQL/PathQLTypeError.class.js";
-import {PathQLNotExistsError} from "/src/PathQL/PathQLNotExistsError.class.js";
-import Types from "/etc/data/types.json" assert {type: "json"};
+import {PathQLTypeError} from "pathql/src/PathQL/PathQLTypeError.class.js";
+import {PathQLNotExistsError} from "pathql/src/PathQL/PathQLNotExistsError.class.js";
+import Types from "pathql/etc/data/types.json" assert {type: "json"};
 
 /**
  * Init: Parse from raw, sync from database

@@ -1,4 +1,4 @@
-import {Example} from "/tests/Entrys/Example.pathql.js";
+import {Example} from "pathql/tests/Entrys/Example.pathql.js";
 
 export class BasisTests {
   constructor(db) {

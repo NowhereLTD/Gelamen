@@ -1,8 +1,8 @@
-import {SqlitePathQLDatabaseController} from "/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
-import {BasisTests} from "/tests/Tests/BasisTests.class.js";
-import {RequestTests} from "/tests/Tests/RequestTests.class.js";
-import {ConnectionTests} from "/tests/Tests/ConnectionTests.class.js";
-import {SearchTests} from "/tests/Tests/SearchTests.class.js";
+import {SqlitePathQLDatabaseController} from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
+import {BasisTests} from "pathql/tests/Tests/BasisTests.class.js";
+import {RequestTests} from "pathql/tests/Tests/RequestTests.class.js";
+import {ConnectionTests} from "pathql/tests/Tests/ConnectionTests.class.js";
+import {SearchTests} from "pathql/tests/Tests/SearchTests.class.js";
 
 let db = new SqlitePathQLDatabaseController({"name": "test.db"});
 

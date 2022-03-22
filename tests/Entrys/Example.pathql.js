@@ -1,5 +1,5 @@
-import {PathQLEntry} from "/src/PathQL/PathQLEntry.class.js";
-import {User} from "/tests/Entrys/User.pathql.js";
+import {PathQLEntry} from "pathql/src/PathQL/PathQLEntry.class.js";
+import {User} from "pathql/tests/Entrys/User.pathql.js";
 
 export class Example extends PathQLEntry {
   static fields = {

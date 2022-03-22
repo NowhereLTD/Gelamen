@@ -1,5 +1,5 @@
-import {Groups} from "/tests/Entrys/Groups.pathql.js";
-import {User} from "/tests/Entrys/User.pathql.js";
+import {Groups} from "pathql/tests/Entrys/Groups.pathql.js";
+import {User} from "pathql/tests/Entrys/User.pathql.js";
 
 export class ConnectionTests {
   constructor(db) {

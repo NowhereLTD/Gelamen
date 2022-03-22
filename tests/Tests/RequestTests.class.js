@@ -1,5 +1,5 @@
-import {Example} from "/tests/Entrys/Example.pathql.js";
-import {User} from "/tests/Entrys/User.pathql.js";
+import {Example} from "pathql/tests/Entrys/Example.pathql.js";
+import {User} from "pathql/tests/Entrys/User.pathql.js";
 
 export class RequestTests {
   constructor(db) {
