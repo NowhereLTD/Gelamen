@@ -333,6 +333,11 @@ export class PathQLEntry {
             }
           }
         };
+        /**
+        "type": "Object",
+        "object": "User",
+        "array": true
+        */
         fieldData[cacheObj.constructor.name + "Id"] = {
           "type": "Int",
           "db": {}
@@ -399,6 +404,23 @@ export class PathQLEntry {
     return result;
   }
 
+  /**
+   * get all connections objects
+   */
+  async getConnections(obj1, obj2) {
+    let statement = `SELECT ` + obj1.constructor.name + `Id FROM ` + this.table + ` WHERE ` + obj2.constructor.name + `Id` + ` = ?;`;
+    let result = await this.db.runPrepared(statement, [obj2.id]);
+    let objectList = [];
+    for(let id of result.result) {
+      if(id) {
+        let cacheObj = await new obj1.constructor({data: {id: id}}, this.db);
+        await cacheObj.load();
+        objectList.push(cacheObj)
+      }
+    }
+    return objectList;
+  }
+
 
   /**
    * Other database methods
@@ -443,11 +465,17 @@ export class PathQLEntry {
         "settings": request.settings
       };
       let resultData = [];
+      let allPerm = false;
+      if(this.checkPermission(this.constructor.name + ".search.*", request.settings.connection.permissions)) {
+        allPerm = true;
+      }
       for(let id of result.result) {
-        let obj = await new this.constructor({}, this.db);
-        newRequest.data.id = id[0];
-        let jsonData = await obj.parseRequest(newRequest);
-        resultData.push(jsonData);
+        if(allPerm || this.checkPermission(this.constructor.name + ".search." + id, request.settings.connection.permissions)) {
+          let obj = await new this.constructor({}, this.db);
+          newRequest.data.id = id[0];
+          let jsonData = await obj.parseRequest(newRequest);
+          resultData.push(jsonData);
+        }
       }
       return resultData;
     }
@@ -500,6 +528,9 @@ export class PathQLEntry {
     let fields = {};
     for(let key in this.request.data) {
       // TODO: Check user permission
+      if(!this.checkPermission(this.constructor.name + "."  + key, request.settings.connection.permissions)) {
+        continue;
+      }
       if(this.constructor.fields[key]) {
         if(this.request.data[key]) {
           this[key] = this.request.data[key];
@@ -551,5 +582,23 @@ export class PathQLEntry {
       }
     }
     return data;
+  }
+
+  /**
+    * Check permission default method
+    */
+  async checkPermission(checkPerm, permissions) {
+    let splitPerm = checkPerm.split(".");
+    if(permissions.includes("*") || permissions.includes(checkPerm)) {
+      return true;
+    }
+    let perm = "";
+    for(let permission of splitPerm) {
+      perm = perm + permission + ".";
+      if(permissions.includes(perm + "*")) {
+        return true;
+      }
+    }
+    return false;
   }
 }

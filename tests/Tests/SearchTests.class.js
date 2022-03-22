@@ -42,8 +42,14 @@ export class SearchTests {
             },
             count: {
             }
+          },
+          settings: {
+            connection: {
+              permissions: ["*"]
+            }
           }
         });
+        console.log(data);
 
         if(data.search) {
           console.log("[OK] find objects by search parameter");

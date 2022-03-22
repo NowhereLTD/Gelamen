@@ -43,9 +43,15 @@ export class RequestTests {
             contributors: {
               name: ""
             }
+          },
+          settings: {
+            connection: {
+              permissions: ["*"]
+            }
           }
         });
 
+        console.log(data);
         console.log("[OK] find request object");
 
         // Clear data
