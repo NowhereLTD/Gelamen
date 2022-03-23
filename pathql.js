@@ -1,13 +1,13 @@
-import {PathQLEntry} from "/src/PathQL/PathQLEntry.class.js";
+import {PathQLEntry} from "pathql/src/PathQL/PathQLEntry.class.js";
 
-import {PathQLDatabaseController} from "/src/PathQL/PathQLDatabaseController.class.js";
+import {PathQLDatabaseController} from "pathql/src/PathQL/PathQLDatabaseController.class.js";
 
-import {PathQLError} from "/src/PathQL/PathQLError.class.js";
-import {PathQLNotExistsError} from "/src/PathQL/PathQLNotExistsError.class.js";
-import {PathQLTypeError} from "/src/PathQL/PathQLTypeError.class.js";
+import {PathQLError} from "pathql/src/PathQL/PathQLError.class.js";
+import {PathQLNotExistsError} from "pathql/src/PathQL/PathQLNotExistsError.class.js";
+import {PathQLTypeError} from "pathql/src/PathQL/PathQLTypeError.class.js";
 
 // "Third Party"
-import {SqlitePathQLDatabaseController} from "/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
+import {SqlitePathQLDatabaseController} from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
 
 export {
   PathQLEntry,
