@@ -10,7 +10,6 @@ export class PathQLEntry {
 
   static fields = {};
   static objects = {};
-  static connections = [];
   static prefix = "pql";
   static search = {
     START: "OFFSET ?",
@@ -38,6 +37,7 @@ export class PathQLEntry {
   constructor(options, db) {
     this.options = options;
     this.db = db;
+    this.connections = [];
     this.cObj = {};
     // Predefine a static table name by use tableName
     if(this.tableName) {
@@ -311,7 +311,7 @@ export class PathQLEntry {
    * Add m to n connections
    */
   async createConnections() {
-    for(let object of this.constructor.connections) {
+    for(let object of this.connections) {
       let cacheObj = await new object({}, this.db);
       let name1 = this.constructor.prefix + "_" + this.constructor.name + "_"  + cacheObj.constructor.name;
       let name2 = this.constructor.prefix + "_" + cacheObj.constructor.name + "_"  + this.constructor.name;

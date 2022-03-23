@@ -15,10 +15,9 @@ export class Groups extends PathQLEntry {
     }
   }
 
-  static connections = [User];
-
   constructor(options = {}, db) {
     super(options, db);
+    this.connections = [User];
     return (async function () {
       await this.parseFromRaw();
       return this;
