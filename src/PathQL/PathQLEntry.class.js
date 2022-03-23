@@ -317,9 +317,9 @@ export class PathQLEntry {
       let name2 = this.constructor.prefix + "_" + cacheObj.constructor.name + "_"  + this.constructor.name;
       let connectionClass = null;
       if(window[name1]) {
-        connectionClass = window[name1].constructor;
+        connectionClass = window[name1];
       }else if(window[name2]) {
-        connectionClass = window[name2].constructor;
+        connectionClass = window[name2];
       }else {
         /**
          * Build automatic field data
@@ -362,9 +362,10 @@ export class PathQLEntry {
           }
         }
         window[name1].table = name1;
+        connectionClass = window[name1];
       }
 
-      let cacheConnectionObj = await new window[name1]({}, this.db);
+      let cacheConnectionObj = await new connectionClass({}, this.db);
       await cacheConnectionObj.init();
       this.cObj[cacheObj.constructor.name] = cacheConnectionObj;
     }
