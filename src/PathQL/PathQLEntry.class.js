@@ -232,27 +232,30 @@ export class PathQLEntry {
    * Method to save data in database
    */
   async save() {
-    await this.parseToRaw();
-    this.generateDatabaseValues();
+    try {
+      await this.parseToRaw();
+      this.generateDatabaseValues();
 
-    let statement = "";
-    if(this.id || !(await this.exists())) {
-      statement = `UPDATE ` + this.table + ` SET ` + this.updateColumns + ` WHERE id = ?;`;
-      this.preparedSaveData.push(this.id);
-    }else {
-      statement = `INSERT INTO ` + this.table + ` (` + this.insertColumns + `) VALUES (` + this.insertValues + `);`;
-    }
-
-    let result = await this.db.runPrepared(statement, this.preparedSaveData);
-    if(result) {
-      if(!this.id && result.cursor) {
-        this.id = result.cursor;
+      let statement = "";
+      if(this.id || !(await this.exists())) {
+        statement = `UPDATE ` + this.table + ` SET ` + this.updateColumns + ` WHERE id = ?;`;
+        this.preparedSaveData.push(this.id);
+      }else {
+        statement = `INSERT INTO ` + this.table + ` (` + this.insertColumns + `) VALUES (` + this.insertValues + `);`;
       }
-      return result;
-    }else {
-      return new PathQLAlredyExistsError({msg: "object alredy exists!"});
-    }
 
+      let result = await this.db.runPrepared(statement, this.preparedSaveData);
+      if(result) {
+        if(!this.id && result.cursor) {
+          this.id = result.cursor;
+        }
+        return result;
+      }else {
+        throw new PathQLAlredyExistsError({msg: "object alredy exists!"});
+      }
+    } catch (e) {
+      throw new PathQLAlredyExistsError({msg: "object alredy exists!"});
+    }
   }
 
   /**
