@@ -116,8 +116,10 @@ export class PathQLEntry {
             this["raw" + key] = this[key];
           }
         }else {
-          this.validate(this[key], Types[value.type.toUpperCase()], key);
-          this["raw" + key] = this[key];
+          if(this[key]) {
+            this.validate(this[key], Types[value.type.toUpperCase()], key);
+            this["raw" + key] = this[key];
+          }
         }
       }
     }
@@ -131,7 +133,11 @@ export class PathQLEntry {
     if(value.toString().match(type.regex)) {
       return true;
     }
-    throw new PathQLTypeError({msg: "element is no object", id: this.options[key].id});
+    if(this.options[key]) {
+      throw new PathQLTypeError({msg: "element is no object", id: this.options[key].id});
+    }else {
+      throw new PathQLTypeError({msg: "element " + key + " is not exists"});
+    }
   }
 
   /**
