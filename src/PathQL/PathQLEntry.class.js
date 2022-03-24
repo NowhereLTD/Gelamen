@@ -1,5 +1,6 @@
 import {PathQLTypeError} from "pathql/src/PathQL/PathQLTypeError.class.js";
 import {PathQLNotExistsError} from "pathql/src/PathQL/PathQLNotExistsError.class.js";
+import {PathQLAlredyExistsError} from "pathql/src/PathQL/PathQLAlredyExistsError.class.js";
 import Types from "pathql/etc/data/types.json" assert {type: "json"};
 
 /**
@@ -243,10 +244,15 @@ export class PathQLEntry {
     }
 
     let result = await this.db.runPrepared(statement, this.preparedSaveData);
-    if(!this.id && result.cursor) {
-      this.id = result.cursor;
+    if(result) {
+      if(!this.id && result.cursor) {
+        this.id = result.cursor;
+      }
+      return result;
+    }else {
+      return new PathQLAlredyExistsError({msg: "object alredy exists!"});
     }
-    return result;
+
   }
 
   /**
