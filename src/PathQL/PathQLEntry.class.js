@@ -429,7 +429,7 @@ export class PathQLEntry {
     let objectList = [];
     for(let id of result.result) {
       if(id) {
-        let cacheObj = await new obj1.constructor({id: id}, this.db);
+        let cacheObj = await new obj1.constructor({id: id[0]}, this.db);
         await cacheObj.load();
         objectList.push(cacheObj)
       }
