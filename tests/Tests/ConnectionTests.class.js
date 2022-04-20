@@ -9,14 +9,14 @@ export class ConnectionTests {
         console.log("[OK] start connection test");
         console.log("[OK] create group object");
         let group = await new Groups({
-          "name": "Test"
+          "name": "Testgroup"
         }, db);
         await group.init();
         await group.save();
 
         console.log("[OK] create user object");
         let user = await new User({
-          "name": "Test"
+          "name": "Test1"
         }, db);
         await user.init();
         await user.save();
@@ -25,7 +25,7 @@ export class ConnectionTests {
         await group.cObj.User.connect(user, group);
 
         // test to get all groups connections
-        await group.cObj.User.getConnections(user, group)
+        await group.cObj.User.getConnections(user, group);
 
         // Clear data
         console.log("[OK] clear connection test data");

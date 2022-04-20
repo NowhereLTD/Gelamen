@@ -1,4 +1,5 @@
 import {PathQLEntry} from "pathql/src/PathQL/PathQLEntry.class.js"
+import {Groups} from "pathql/tests/Entrys/Groups.pathql.js";
 
 export class User extends PathQLEntry {
   static fields = {
@@ -16,6 +17,7 @@ export class User extends PathQLEntry {
 
   constructor(options = {}, db) {
     super(options, db);
+    this.connections = [Groups];
     return (async function () {
       await this.parseFromRaw();
       return this;

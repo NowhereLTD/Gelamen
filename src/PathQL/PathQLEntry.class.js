@@ -32,7 +32,9 @@ export class PathQLEntry {
   // pathql
   static methods = {
     "search": {},
-    "count": {}
+    "count": {},
+    "addObj": {},
+    "rmObj": {}
   };
 
   constructor(options, db) {
@@ -262,6 +264,7 @@ export class PathQLEntry {
    * Delete entry from table
    */
   async delete() {
+    await this.createConnections();
     let statement = `DELETE FROM ` + this.table + ` WHERE id = ?;`;
     let result = await this.db.runPrepared(statement, [this.id]);
     for(let connectionObj in this.cObj) {
@@ -453,11 +456,14 @@ export class PathQLEntry {
     let searchData = [];
     let whereData = [];
 
+    await this.createConnections();
+
     if(data) {
       for(let key in data) {
         if(key == "data") {
           continue;
         }
+
         if(this.constructor.search[key.toUpperCase()]) {
           searchStatement = searchStatement + " " + this.constructor.search[key.toUpperCase()];
           searchData.push(data[key]);
@@ -465,6 +471,14 @@ export class PathQLEntry {
           isWhere = true;
           whereStatement = whereStatement + key + " " + this.constructor.where[data[key].type.toUpperCase()] + " AND ";
           for(let value of data[key].values) {
+            this.validate(value, Types[this.constructor.fields[key].type.toUpperCase()], key);
+            whereData.push(value);
+          }
+        }else if(this.cObj[key] && data[key].type && this.constructor.where[data[key].type.toUpperCase()] && data[key].values) {
+          isWhere = true;
+          whereStatement = whereStatement + "id IN (SELECT " + this.constructor.name + "Id FROM " + this.cObj[key].table + " WHERE " + key + "Id " + this.constructor.where[data[key].type.toUpperCase()] + ") AND ";
+          for(let value of data[key].values) {
+            this.validate(value, Types.INT, key);
             whereData.push(value);
           }
         }
@@ -512,7 +526,7 @@ export class PathQLEntry {
         if(key == "data") {
           continue;
         }
-        if(this.constructor.fields[key] && data[key].type && this.constructor.where[data[key].type.toUpperCase()] && data[key].values) {
+        if(this.constructor.fields[key] != null && data[key].type != null && this.constructor.where[data[key].type.toUpperCase()] != null && data[key].values != null) {
           isWhere = true;
           whereStatement = whereStatement + key + " " + this.constructor.where[data[key].type.toUpperCase()] + " AND ";
           for(let value of data[key].values) {
@@ -529,6 +543,44 @@ export class PathQLEntry {
 
       return result.result[0][0];
     }
+  }
+
+  /**
+    * Client method to add an object like a user to another object like an group
+    */
+  async addObj(data, request) {
+    await this.load();
+    await this.createConnections();
+    if(data.name != null && data.id != null && this.cObj[data.name] != null) {
+      for(let connection of this.connections) {
+        if(connection.name == data.name) {
+          let cacheObj = await new connection({id: data.id}, this.db);
+          await cacheObj.load();
+          await this.cObj[data.name].connect(this, cacheObj);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+    * Client method to remove a connection between objects
+    */
+  async rmObj(data, request) {
+    await this.load();
+    await this.createConnections();
+    if(data.name != null && data.id != null && this.cObj[data.name] != null) {
+      for(let connection of this.connections) {
+        if(connection.name == data.name) {
+          let cacheObj = await new connection({id: data.id}, this.db);
+          await cacheObj.load();
+          await this.cObj[data.name].removeConnection(cacheObj);
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
