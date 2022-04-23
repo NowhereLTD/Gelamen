@@ -17,7 +17,8 @@ export class SearchTests {
           "name": "Test",
           "email": "test@example.com",
           "tagline": "My project",
-          "contributors": [user.id]
+          "contributors": [user.id],
+          "admin": user.id
         }, db);
         await example.init();
         await example.save();
@@ -31,6 +32,10 @@ export class SearchTests {
               ORDER: "id",
               LIMIT: 10,
               START: 0,
+              "admin": {
+                type: "BETWEEN",
+                values: [0, user.id]
+              },
               /*id: {
                 type: "EQUAL",
                 values: [10]

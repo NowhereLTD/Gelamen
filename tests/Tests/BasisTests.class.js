@@ -9,7 +9,8 @@ export class BasisTests {
         "name": "Test",
         "email": "test@example.com",
         "tagline": "My project",
-        "contributors": [1]
+        "contributors": [1],
+        "admin": 1
       }, db);
       await example.init();
 

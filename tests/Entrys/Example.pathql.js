@@ -23,6 +23,10 @@ export class Example extends PathQLEntry {
       "type": "Object",
       "object": "User",
       "array": true
+    },
+    "admin": {
+      "type": "Object",
+      "object": "User"
     }
   }
 

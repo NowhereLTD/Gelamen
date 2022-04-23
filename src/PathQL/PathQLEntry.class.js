@@ -37,9 +37,10 @@ export class PathQLEntry {
     "rmObj": {}
   };
 
-  constructor(options, db) {
+  constructor(options, db, debug = false) {
     this.options = options;
     this.db = db;
+    this.debug = debug;
     this.connections = [];
     this.cObj = {};
     // Predefine a static table name by use tableName
@@ -133,6 +134,9 @@ export class PathQLEntry {
    * TODO: check if value is null
    */
   validate(value, type, key) {
+    if(!type) {
+      type = Types.INT;
+    }
     if(value.toString().match(type.regex)) {
       return true;
     }
@@ -611,7 +615,8 @@ export class PathQLEntry {
       }
     }
 
-    if(parseInt(this.request.data.id)) {
+    let parseId = parseInt(this.request.data.id);
+    if(parseId || parseId === 0) {
       data.json = await this.getFieldJSON(fields, request);
     }
     return data;
@@ -643,7 +648,8 @@ export class PathQLEntry {
             data[key].push(await this[key][id].parseRequest(fields[key]));
           }
         }else {
-          data[key] = await object.parseRequest(fields[key]);
+          console.log("yes")
+          data[key] = await this[key].parseRequest(fields[key]);
         }
       }else {
         data[key] = this[key];
