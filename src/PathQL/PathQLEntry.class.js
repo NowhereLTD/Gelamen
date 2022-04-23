@@ -648,7 +648,6 @@ export class PathQLEntry {
             data[key].push(await this[key][id].parseRequest(fields[key]));
           }
         }else {
-          console.log("yes")
           data[key] = await this[key].parseRequest(fields[key]);
         }
       }else {
