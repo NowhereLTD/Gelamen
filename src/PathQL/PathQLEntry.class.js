@@ -82,7 +82,7 @@ export class PathQLEntry {
             }
           }else {
             this.validate(cacheRaw, Types.INT, key);
-            this[key] = await new this.constructor.objects[value.object]({id: cacheRaw});
+            this[key] = await new this.constructor.objects[value.object]({id: cacheRaw}, this.db);
           }
         }else {
           this.validate(this["raw" + key], Types[value.type.toUpperCase()], key);
@@ -615,7 +615,7 @@ export class PathQLEntry {
       }
     }
 
-    let parseId = parseInt(this.request.data.id);
+    let parseId = parseInt(this.request.data.id) ? parseInt(this.request.data.id) : this.id;
     if(parseId || parseId === 0) {
       data.json = await this.getFieldJSON(fields, request);
     }

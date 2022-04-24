@@ -60,7 +60,7 @@ export class SearchTests {
             }
           }
         });
-        console.log(data);
+        console.log(data.search[0]);
 
         if(data.search) {
           console.log("[OK] find objects by search parameter");
