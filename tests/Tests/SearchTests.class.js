@@ -42,7 +42,13 @@ export class SearchTests {
               },*/
               data: {
                 id: "",
-                name: ""
+                name: "",
+                contributors: {
+                  id: ""
+                },
+                admin: {
+                  id: ""
+                }
               }
             },
             count: {
