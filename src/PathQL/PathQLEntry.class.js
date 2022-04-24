@@ -617,7 +617,11 @@ export class PathQLEntry {
 
     let parseId = parseInt(this.request.data.id) ? parseInt(this.request.data.id) : this.id;
     if(parseId || parseId === 0) {
-      data.json = await this.getFieldJSON(fields, request);
+      let jsonData = await this.getFieldJSON(fields, request);
+      data = {
+        ...data,
+        ...jsonData
+      }
     }
     return data;
   }
