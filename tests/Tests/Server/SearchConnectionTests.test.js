@@ -2,7 +2,7 @@ import { SqlitePathQLDatabaseController } from "pathql/tests/DatabaseController/
 import { Groups } from "pathql/tests/Entrys/Groups.pathql.js";
 import { User } from "pathql/tests/Entrys/User.pathql.js";
 
-Deno.test("basis test", async (t) => {
+Deno.test("basis test", async (_t) => {
 	const db = new SqlitePathQLDatabaseController({ "name": "test.db" });
 	try {
 		console.log("----------------------");

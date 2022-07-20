@@ -1,15 +1,15 @@
 
 export class PathQLDatabaseController {
-  static AUTOINCREMENT = "AUTOINCREMENT";
-  static PRIMARY = "PRIMARY KEY";
-  static UNIQUE = "UNIQUE";
+	static AUTOINCREMENT = "AUTOINCREMENT";
+	static PRIMARY = "PRIMARY KEY";
+	static UNIQUE = "UNIQUE";
 
-  constructor(options) {
-    this.options = options;
-    this.connection = null;
-  }
+	constructor(options) {
+		this.options = options;
+		this.connection = null;
+	}
 
-  async runPrepared(statement, data) {}
+	async runPrepared(_statement, _data) {}
 
-  async close() {}
+	async close() {}
 }

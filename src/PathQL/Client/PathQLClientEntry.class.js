@@ -2,7 +2,7 @@
  * PathQLClientEntry represent a clone of the backend entry and allows the developer to simple create and handle requests
  */
 export class PathQLClientEntry {
-  static fields = {};
+	static fields = {};
 
 	// pathql
 	static methods = {
@@ -12,9 +12,9 @@ export class PathQLClientEntry {
 		"rmObj": {}
 	};
 
-  constructor(options, debug = false) {
+	constructor(options, debug = false) {
 		return (async function () {
-      this.debug = debug;
+			this.debug = debug;
 			this.client = options.client ? options.client : {};
 
 			const requestData = await this.send({
@@ -27,19 +27,19 @@ export class PathQLClientEntry {
 			};
 			entry.objects = data.objects;
 			return entry;
-    }.bind(this)());
+		}.bind(this)());
 	}
 
-  getEntryByData(json) {
-    const entry = new class extends PathQLClientEntry {
-      static fields = json.fields;
-      static objects = json.objects;
-      static methods = json.methods;
-    }
-    return entry;
-  }
+	getEntryByData(json) {
+		const entry = new class extends PathQLClientEntry {
+			static fields = json.fields;
+			static objects = json.objects;
+			static methods = json.methods;
+		}
+		return entry;
+	}
 
-  async send(json) {
-    return await this.client.send(json);
-  }
+	async send(json) {
+		return await this.client.send(json);
+	}
 }

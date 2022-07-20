@@ -3,7 +3,7 @@ import { Example } from "pathql/tests/Entrys/Example.pathql.js";
 import { User } from "pathql/tests/Entrys/User.pathql.js";
 
 
-Deno.test("basis test", async (t) => {
+Deno.test("basis test", async (_t) => {
 	const db = new SqlitePathQLDatabaseController({ "name": "test.db" });
 	const user = await new User({
 		"name": "Test1"
