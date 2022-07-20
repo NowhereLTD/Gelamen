@@ -1,7 +1,7 @@
-import {PathQLEntry} from "pathql/src/PathQL/PathQLEntry.class.js";
+import {PathQLServerEntry} from "pathql/src/PathQL/Server/PathQLServerEntry.class.js";
 import {User} from "pathql/tests/Entrys/User.pathql.js";
 
-export class Example extends PathQLEntry {
+export class Example extends PathQLServerEntry {
   static fields = {
     "id": {
       "type": "Int",
@@ -26,18 +26,18 @@ export class Example extends PathQLEntry {
     },
     "admin": {
       "type": "Object",
-      "object": "User"
+      "object": "User",
+      "private": true
     }
   }
 
-  static objects = {
-    "User": User
-  };
-
   constructor(options = {}, db) {
     super(options, db);
+    this.objects = {
+      "User": User
+    };
     return (async function () {
-      await this.parseToRaw();
+      await this.parseFromRaw();
       return this;
     }.bind(this)());
   }

@@ -1,0 +1,5 @@
+{
+  "START": "OFFSET ?",
+  "LIMIT": "LIMIT ?",
+  "ORDER": "ORDER BY ?"
+}

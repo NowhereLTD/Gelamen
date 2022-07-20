@@ -22,10 +22,10 @@ export class SearchConnectionTests {
         await user.save();
 
         console.log("[OK] connect user and group object");
-        await group.cObj.User.connect(user, group);
+        await group.cObj["users"].connect(user, group);
 
         // test to get all groups connections
-        await group.cObj.User.getConnections(user, group);
+        await group.cObj["users"].getConnections(user, group);
 
         let requestExample = await new User({}, db);
 

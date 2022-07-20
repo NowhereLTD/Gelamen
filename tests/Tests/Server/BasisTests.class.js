@@ -1,16 +1,23 @@
 import {Example} from "pathql/tests/Entrys/Example.pathql.js";
+import {User} from "pathql/tests/Entrys/User.pathql.js";
 
 export class BasisTests {
   constructor(db) {
     return (async function () {
       console.log("----------------------");
       console.log("[OK] start test");
+      let user = await new User({
+        "name": "Test1"
+      }, db);
+      await user.init();
+      await user.save();
+
       let example = await new Example({
         "name": "Test",
         "email": "test@example.com",
         "tagline": "My project",
-        "contributors": [1],
-        "admin": 1
+        "contributors": [user.id],
+        "admin": user.id
       }, db);
       await example.init();
 

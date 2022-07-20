@@ -1,0 +1,10 @@
+{
+  "EQUAL": "= ?",
+  "GREATER": "> ?",
+  "LESS": "< ?",
+  "GREATEREQUAL": ">= ?",
+  "LESSEQUAL": "<= ?",
+  "BETWEEN": "BETWEEN ? AND ?",
+  "LIKE": "LIKE ?",
+  "IN": "IN ?"
+}

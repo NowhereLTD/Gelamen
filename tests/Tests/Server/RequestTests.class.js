@@ -18,7 +18,8 @@ export class RequestTests {
           "name": "Test",
           "email": "test@example.com",
           "tagline": "My project",
-          "contributors": [user.id]
+          "contributors": [user.id],
+          "admin": user.id
         }, db);
         await example.init();
         await example.save();

@@ -1,5 +1,5 @@
 import {DB} from "https://deno.land/x/sqlite/mod.ts";
-import {PathQLDatabaseController} from "pathql/src/PathQL/PathQLDatabaseController.class.js";
+import {PathQLDatabaseController} from "pathql/src/PathQL/Server/PathQLDatabaseController.class.js";
 
 export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
   constructor(options) {
