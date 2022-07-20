@@ -15,7 +15,7 @@ IMPORTANT: create an import_map.json and use it via deno cli
 
 Entry Example:
 ```javascript
-import {PathQLEntry} from "pathql/src/PathQL/PathQLEntry.class.js"
+import {PathQLEntry} from "pathql/src/PathQL/Server/PathQLEntry.class.js"
 
 export class Groups extends PathQLEntry {
   static fields = {
