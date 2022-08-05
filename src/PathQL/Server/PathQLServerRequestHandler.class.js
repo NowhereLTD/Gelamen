@@ -2,29 +2,33 @@
 export class PathQLServerRequestHandler {
 	static objects = {};
 
-	constructor(options) {
-		return (async function () {
-			this.port = options.port ? options.port : 8080;
-			this.name = options.name ? options.name : "PathQLServerRequestHandler";
-			this.version = options.version ? options.version : "0.1";
-			this.db = options.db ? options.db : null;
-			this.clients = {};
-			this.debug = true;
-			await this.listen();
-		}.bind(this)());
+	constructor(options = {}) {
+		this.port = options.port ? options.port : 9080;
+		this.host = options.host ? options.host : "localhost";
+		this.name = options.name ? options.name : "PathQLServerRequestHandler";
+		this.version = options.version ? options.version : "0.1";
+		this.db = options.db ? options.db : null;
+		this.clients = {};
+		this.debug = true;
+		this.run = true;
 	}
 
 	async listen() {
 		console.log(`${this.name} v${this.version} listen...`);
-		this.listener = await Deno.listen({ port: this.port });
-		while(true) {
-			this.handleConnection(await this.listener.accept())
+		if(this.cert && this.key) {
+			this.listener = await Deno.listenTls({port: this.port, hostname: this.host, certFile: this.cert, keyFile: this.key});
+		}else {
+			this.listener = await Deno.listen({port: this.port, hostname: this.host});
+		}
+		
+		while(this.run) {
+			this.handleConnection(await this.listener.accept());
 		}
 	}
 
 	async handleConnection(tcpConnection) {
 		const httpConnection = Deno.serveHttp(tcpConnection);
-		while(true) {
+		while(this.run) {
 			const connection = await httpConnection.nextRequest();
 			if(connection) {
 				const {socket, response} = Deno.upgradeWebSocket(connection.request);
@@ -147,6 +151,13 @@ export class PathQLServerRequestHandler {
 
 				connection.respondWith(response);
 			}
+		}
+	}
+
+	stop() {
+		this.run = false;
+		if(this.listener) {
+			this.listener.close();
 		}
 	}
 }

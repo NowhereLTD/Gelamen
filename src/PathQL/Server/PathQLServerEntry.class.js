@@ -208,11 +208,11 @@ export class PathQLServerEntry {
 			//fieldList = this.fieldList.slice(0, -2);
 			const statement = `SELECT ${this.selectColumns} FROM ${this.table} WHERE id = ?;`;
 			const result = await this.db.runPrepared(statement, [this.id]);
-			let i = 0;
 			if(result.result && result.result.length > 0) {
+				let i = 0;
 				for(const key of this.selectColumnsArray) {
 					if(result.result[0][i]) {
-					this["raw" + key] = result.result[0][i];
+						this["raw" + key] = result.result[0][i];
 					}
 					i++;
 				}

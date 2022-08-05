@@ -12,7 +12,7 @@ export class PathQLClientEntry {
 		"rmObj": {}
 	};
 
-	constructor(options, debug = false) {
+	constructor(options = {}, debug = false) {
 		return (async function () {
 			this.debug = debug;
 			this.client = options.client ? options.client : {};
