@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import {PathQLClientEntry} from "./PathQLClientEntry.class.js";
 
 export class PathQLClientRequestHandler extends EventTarget {
@@ -104,7 +105,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 		
 						constructor() {
 							super({client: client});
-							return (async function () {
+							return (function () {
 								return this;
 							}.bind(this)());
 						}
@@ -112,7 +113,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 				}
 			}
 			return true;
-		}catch(e) {
+		}catch(_e) {
 			return false;
 		}
 	}
