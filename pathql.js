@@ -1,4 +1,4 @@
-import {PathQLEntry} from "pathql/src/PathQL/Server/PathQLServerEntry.class.js";
+import {PathQLServerEntry} from "pathql/src/PathQL/Server/PathQLServerEntry.class.js";
 
 import {PathQLDatabaseController} from "pathql/src/PathQL/Server/PathQLDatabaseController.class.js";
 
@@ -11,7 +11,7 @@ import {PathQLAlredyExistsError} from "pathql/src/PathQL/Error/PathQLAlredyExist
 import {SqlitePathQLDatabaseController} from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
 
 export {
-  PathQLEntry,
+  PathQLServerEntry,
   PathQLDatabaseController,
   PathQLError,
   PathQLNotExistsError,
