@@ -469,15 +469,17 @@ export class PathQLServerEntry {
 	async saveAllConnectionObjects() {
 		let checkConnection = true;
 		for(const key of this.objectColumnsArray) {
-			const field = this.constructor.fields[key];
-			const object = this.cObj[key];
-			if(field.array) {
-				for(const connectionId in this[key]) {
-					const connection = this[key][connectionId];
-					checkConnection = await object.connect(connection, this)
+			if(this[key] != null) {
+				const field = this.constructor.fields[key];
+				const object = this.cObj[key];
+				if(field.array) {
+					for(const connectionId in this[key]) {
+						const connection = this[key][connectionId];
+						checkConnection = await object.connect(connection, this);
+					}
+				}else {
+					checkConnection = await object.connect(this[key], this);
 				}
-			}else {
-				checkConnection = await object.connect(this[key], this)
 			}
 		}
 		return checkConnection;
