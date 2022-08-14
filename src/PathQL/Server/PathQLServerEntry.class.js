@@ -395,7 +395,7 @@ export class PathQLServerEntry {
 		const thisName = this.constructor.name;
 		const objName = obj.constructor.name;
 		
-		const foreignObjectName = obj.constructor.prefix + "_" + objName + "_" + thisName + "_" + key;
+		let foreignObjectName = obj.constructor.prefix + "_" + objName + "_" + thisName + "_" + key;
 		if(thisName.localeCompare(objName) > 0) {
 			foreignObjectName = this.constructor.prefix + "_" + thisName + "_" + objName + "_" + key;
 		}
