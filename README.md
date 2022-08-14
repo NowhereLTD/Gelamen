@@ -12,8 +12,10 @@ IMPORTANT: create an import_map.json and use it via deno cli
 }
 ```
 
+### Entry Example:
 
-Entry Example:
+The entry runs our entire database handling. You can simple add own database and frontend routes into the entry.
+
 ```javascript
 import {PathQLServerEntry} from "pathql/src/PathQL/Server/PathQLServerEntry.class.js"
 
@@ -44,5 +46,35 @@ export class Groups extends PathQLServerEntry {
 }
 ```
 
+### Server Example
+
+The server handles the client requests and gives you the possibility to provide your backend entrys to your frontend.
+
+```javascript
+import {PathQLServerRequestHandler} from "pathql/src/PathQL/Server/PathQLServerRequestHandler.class.js";
+import {Groups} from "src/Groups.class.js";
+
+export class YourServer extends PathQLServerRequestHandler {
+
+  static objects = {
+    "Groups": Groups
+    // add all other objects
+  }
+
+  constructor(options) {
+    super(options);
+  }
+}
+```
+
 
 Show into tests/ folder for Entry and Request examples.
+
+## Tests
+There are two types of tests, the `Local` and the `CLI` tests.
+The `CLI` tests are in the `Tests/Client` and `Tests/Server` directory and the `Local` tests are in the `Tests/Local` directory.
+
+To use the `CLI` tests just run the `test.sh` in our `tests/` directory.
+
+To use the `Local` tests copy the entire PathQL folder to your local webserver, execute the `Tests/Local/Server/server.sh` and open the url `http://localhost/pathql/tests/Tests/Client/` in your webbrowser.
+

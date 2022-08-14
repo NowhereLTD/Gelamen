@@ -1,3 +1,4 @@
+import {PathQLClientEntry} from "./PathQLClientEntry.class.js";
 
 export class PathQLClientRequestHandler extends EventTarget {
 	constructor(options = {}) {
@@ -6,6 +7,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 		this.pingTime = 10000;
 		this.messageCounter = 0;
 		this.url = options.url ? options.url : "ws://localhost:9080";
+		this.objects = {};
 		this.init();
 	}
 
@@ -83,5 +85,35 @@ export class PathQLClientRequestHandler extends EventTarget {
 		setTimeout(async function() {
 			await this.ping();
 		}.bind(this), this.pingTime);
+	}
+
+	async getAllObjects() {
+		try {
+			const objects = await this.send({
+				getAllObjects: true
+			});
+	
+			const client = this;
+			for(const objectName in objects) {
+				const object = objects[objectName];
+				if(!object.error) {
+					this.objects[objectName] = class extends PathQLClientEntry {
+						static fields = object.fields;
+						static methods = object.methods;
+						static objects = object.objects
+		
+						constructor() {
+							super({client: client});
+							return (async function () {
+								return this;
+							}.bind(this)());
+						}
+					}
+				}
+			}
+			return true;
+		}catch(e) {
+			return false;
+		}
 	}
 }

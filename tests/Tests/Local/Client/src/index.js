@@ -2,5 +2,5 @@ import {PathQLClientRequestHandler} from "../../../../../src/PathQL/Client/PathQ
 
 let client = new PathQLClientRequestHandler();
 client.addEventListener("open", async function() {
-  console.log(await client.getAllObjects());
+  await client.getAllObjects();
 });

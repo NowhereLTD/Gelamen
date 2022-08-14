@@ -1,3 +1,4 @@
+import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
 
 export class PathQLServerRequestHandler {
 	static objects = {};
@@ -10,7 +11,10 @@ export class PathQLServerRequestHandler {
 		this.db = options.db ? options.db : null;
 		this.clients = {};
 		this.debug = true;
-		this.run = true;
+		this.run = false;
+		if(!this.db) {
+			throw new PathQLNotExistsError({msg: "database not given!"});
+		}
 	}
 
 	async listen() {
@@ -20,6 +24,7 @@ export class PathQLServerRequestHandler {
 		}else {
 			this.listener = await Deno.listen({port: this.port, hostname: this.host});
 		}
+		this.run = true;
 		
 		while(this.run) {
 			this.handleConnection(await this.listener.accept());
@@ -98,33 +103,9 @@ export class PathQLServerRequestHandler {
 							}));
 						}else if(msg.getObject) {
 							const answer = {};
-							if(this.constructor.objects[msg.getObject] != null) {
-								const object = this.constructor.objects[msg.getObject];
-								const fieldArray = {};
-								for(const key in object.fields) {
-									// TODO: check the user permission
-									if(!object.fields[key].private) {
-										fieldArray[key] = object.fields[key];
-									}
-								}
-
-								const methodArray = {};
-								for(const key in object.methods) {
-									// TODO: check the user permission
-									methodArray[key] = object.methods[key];
-								}
-
-								const objectArray = {};
-								for(const key in object.objects) {
-									// TODO: check the user permission
-									objectArray[key] = JSON.stringify(object.objects[key]);
-								}
-
-								answer[msg.getObject] = {
-									fields: fieldArray,
-									objects: objectArray,
-									methods: methodArray
-								};
+							const object = this.getObject(msg.getObject);
+							if(object) {
+								answer[msg.getObject] = object;
 							}else {
 								answer[msg.getObject] = {
 									error: {
@@ -132,6 +113,29 @@ export class PathQLServerRequestHandler {
 									}
 								}
 							}
+							if(msg.messageCounter != undefined) {
+								answer["messageCounter"] = msg.messageCounter;
+							}
+							answer.time = Date.now();
+							socket.send(JSON.stringify(answer));
+						}else if(msg.getAllObjects) {
+							const answer = {};
+							for(const objectName in this.constructor.objects) {
+								const object = this.getObject(objectName);
+								if(object) {
+									answer[objectName] = object;
+								}else {
+									answer[objectName] = {
+										error: {
+											msg: "Object not exists!"
+										}
+									}
+								}
+							}
+							if(msg.messageCounter != undefined) {
+								answer["messageCounter"] = msg.messageCounter;
+							}
+
 							answer.time = Date.now();
 							socket.send(JSON.stringify(answer));
 						}
@@ -158,6 +162,39 @@ export class PathQLServerRequestHandler {
 		this.run = false;
 		if(this.listener) {
 			this.listener.close();
+		}
+	}
+
+	getObject(objectName) {
+		if(this.constructor.objects[objectName] != null) {
+			const object = this.constructor.objects[objectName];
+			const fieldArray = {};
+			for(const key in object.fields) {
+				// TODO: check the user permission
+				if(!object.fields[key].private) {
+					fieldArray[key] = object.fields[key];
+				}
+			}
+
+			const methodArray = {};
+			for(const key in object.methods) {
+				// TODO: check the user permission
+				methodArray[key] = object.methods[key];
+			}
+
+			const objectArray = {};
+			for(const key in object.objects) {
+				// TODO: check the user permission
+				objectArray[key] = JSON.stringify(object.objects[key]);
+			}
+
+			return {
+				fields: fieldArray,
+				objects: objectArray,
+				methods: methodArray
+			};
+		}else {
+			return null;
 		}
 	}
 }

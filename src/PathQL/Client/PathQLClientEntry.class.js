@@ -12,31 +12,29 @@ export class PathQLClientEntry {
 		"rmObj": {}
 	};
 
-	constructor(options = {}, debug = false) {
-		return (async function () {
-			this.debug = debug;
-			this.client = options.client ? options.client : {};
+	static name = "PathQLClientEntry";
 
-			const requestData = await this.send({
-				getObject: this.constructor.name
-			});
-			const data = requestData[this.constructor.name];
-			const entry = new class extends PathQLClientEntry {
-				static fields = data.fields;
-				static methods = data.methods;
-			};
-			entry.objects = data.objects;
-			return entry;
-		}.bind(this)());
+	constructor(options = {}, debug = false) {
+		this.debug = debug;
+		this.client = options.client ? options.client : {};
+		for(const method in this.constructor.methods) {
+			this[method] = (data) => {
+				const request = {
+					pathql: {}
+				}
+				request.pathql[this.constructor.name] = {};
+				request.pathql[this.constructor.name][method] = data;
+				request.pathql[this.constructor.name].data = this.getFieldNames();
+			}
+		}
 	}
 
-	getEntryByData(json) {
-		const entry = new class extends PathQLClientEntry {
-			static fields = json.fields;
-			static objects = json.objects;
-			static methods = json.methods;
+	getFieldNames() {
+		const fields = {};
+		for(const field in this.constructor.fields) {
+			fields[field] = "";
 		}
-		return entry;
+		return fields;
 	}
 
 	async send(json) {
