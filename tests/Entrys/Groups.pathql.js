@@ -15,8 +15,7 @@ export class Groups extends PathQLServerEntry {
 		},
 		"users": {
 			"type": "Object",
-			"object": "User",
-			"array": true
+			"object": "User"
 		}
 	}
 
