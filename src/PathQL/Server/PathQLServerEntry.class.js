@@ -258,7 +258,6 @@ export class PathQLServerEntry {
 				statement = `INSERT INTO ${this.table} (${this.insertColumns}) VALUES (${this.insertValues});`;
 			}
 
-			console.log(this.insertColumns);
 			if(statement === "") {
 				return null;
 			}
