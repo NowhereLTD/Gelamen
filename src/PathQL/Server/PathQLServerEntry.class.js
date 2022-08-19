@@ -110,6 +110,7 @@ export class PathQLServerEntry {
 						this["raw" + key] = JSON.stringify(this["raw" + key]);
 					}else {
 						this.validate(this[key].id, Types.INT, key);
+						console.log(this[key]);
 						this["raw" + key] = this[key].id;
 					}
 				}else {
@@ -257,7 +258,7 @@ export class PathQLServerEntry {
 				statement = `INSERT INTO ${this.table} (${this.insertColumns}) VALUES (${this.insertValues});`;
 			}
 
-			console.log(this.updateColumns);
+			console.log(this.insertColumns);
 			if(statement === "") {
 				return null;
 			}
