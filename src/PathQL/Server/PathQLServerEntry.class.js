@@ -257,10 +257,10 @@ export class PathQLServerEntry {
 				statement = `INSERT INTO ${this.table} (${this.insertColumns}) VALUES (${this.insertValues});`;
 			}
 
+			console.log(this.updateColumns);
 			if(statement === "") {
 				return null;
 			}
-			console.log("yes");
 			const result = await this.db.runPrepared(statement, this.preparedSaveData);
 			if(result) {
 				if(!this.id && result.cursor) {
