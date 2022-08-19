@@ -168,17 +168,19 @@ export class PathQLServerEntry {
 			this.selectColumnsArray = [];
 			this.objectColumnsArray = [];
 			for(const key in this.constructor.fields) {
-				const field = this.constructor.fields[key];
-				if(field.type.toUpperCase() != "OBJECT") {
-					if(key != "id") {
-						this.updateColumns = this.updateColumns + key + " = ?, ";
-						this.insertColumns = this.insertColumns + key + ", ";
-						this.insertValues = this.insertValues + "?, "
+				if(this[key]) {
+					const field = this.constructor.fields[key];
+					if(field.type.toUpperCase() != "OBJECT") {
+						if(key != "id") {
+							this.updateColumns = this.updateColumns + key + " = ?, ";
+							this.insertColumns = this.insertColumns + key + ", ";
+							this.insertValues = this.insertValues + "?, "
+						}
+						this.selectColumns = this.selectColumns + key + ", ";
+						this.selectColumnsArray.push(key);
+					}else {
+						this.objectColumnsArray.push(key);
 					}
-					this.selectColumns = this.selectColumns + key + ", ";
-					this.selectColumnsArray.push(key);
-				}else {
-					this.objectColumnsArray.push(key);
 				}
 			}
 			this.updateColumns = this.updateColumns.slice(0, -2);
@@ -193,10 +195,12 @@ export class PathQLServerEntry {
 		generateDatabaseValues() {
 			this.preparedSaveData = [];
 			for(const key in this.constructor.fields) {
-				const field = this.constructor.fields[key];
-				if(key != "id") {
-					if(field.type.toUpperCase() != "OBJECT") {
-						this.preparedSaveData.push(this["raw" + key]);
+				if(this["raw" + key]) {
+					const field = this.constructor.fields[key];
+					if(key != "id") {
+						if(field.type.toUpperCase() != "OBJECT") {
+							this.preparedSaveData.push(this["raw" + key]);
+						}
 					}
 				}
 			}
