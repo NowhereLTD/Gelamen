@@ -168,10 +168,9 @@ export class PathQLServerEntry {
 			this.selectColumnsArray = [];
 			this.objectColumnsArray = [];
 			for(const key in this.constructor.fields) {
-				if(this[key]) {
 					const field = this.constructor.fields[key];
 					if(field.type.toUpperCase() != "OBJECT") {
-						if(key != "id") {
+						if(key != "id" && this[key]) {
 							this.updateColumns = this.updateColumns + key + " = ?, ";
 							this.insertColumns = this.insertColumns + key + ", ";
 							this.insertValues = this.insertValues + "?, "
@@ -181,7 +180,6 @@ export class PathQLServerEntry {
 					}else {
 						this.objectColumnsArray.push(key);
 					}
-				}
 			}
 			this.updateColumns = this.updateColumns.slice(0, -2);
 			this.insertColumns = this.insertColumns.slice(0, -2);
@@ -252,13 +250,16 @@ export class PathQLServerEntry {
 			this.generateDatabaseValues();
 
 			let statement = "";
-			if(this.id || !(await this.exists())) {
+			if(this.id || !(await this.exists()) && this.updateColumns) {
 				statement = `UPDATE ${this.table} SET ${this.updateColumns} WHERE id = ?;`;
 				this.preparedSaveData.push(this.id);
-			}else {
+			}else if(this.insertColumns) {
 				statement = `INSERT INTO ${this.table} (${this.insertColumns}) VALUES (${this.insertValues});`;
 			}
 
+			if(statement === "") {
+				return null;
+			}
 			const result = await this.db.runPrepared(statement, this.preparedSaveData);
 			if(result) {
 				if(!this.id && result.cursor) {
