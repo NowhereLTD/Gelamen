@@ -98,6 +98,7 @@ export class PathQLServerEntry {
 				const field = this.constructor.fields[key];
 				if(field.type.toUpperCase() == "OBJECT") {
 					if(field.array) {
+						console.log(this[key].constructor.name);
 						if(this[key] && this[key].constructor.name != "Array" && this[key].constructor.name != "Object") {
 							const cacheId = this.options[key] ? this.options[key].id : null;
 							throw new PathQLTypeError({msg: "element is no array or object", id: cacheId});
