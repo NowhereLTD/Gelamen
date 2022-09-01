@@ -5,10 +5,15 @@ export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
 	constructor(options) {
 		super(options);
 		this.connection = new DB(this.options.name);
+		this.debug = this.options.debug ? this.options.debug : false;
 	}
 
 	runPrepared(statement, data) {
 		try {
+			if(this.debug) {
+				console.log(statement);
+				console.log(data);
+			}
 			const result = this.connection.query(statement, data);
 			const cursor = this.connection._wasm.last_insert_rowid();
 			return {
