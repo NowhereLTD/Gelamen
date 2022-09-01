@@ -249,6 +249,7 @@ export class PathQLServerEntry {
 		try {
 			await this.parseToRaw();
 			this.generateDatabaseValues();
+			this.generateDatabaseKeys();
 
 			let statement = "";
 			if(this.id || !(await this.exists()) && this.updateColumns) {
