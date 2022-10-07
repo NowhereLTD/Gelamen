@@ -36,7 +36,7 @@ export class PathQLServerEntry {
 	constructor(options, db, debug = false) {
 		this.options = options;
 		this.db = db;
-		this.debug = debug;
+		this.debugLog = debug;
 		this.connections = [];
 		this.cObj = {};
 		// Predefine a static table name by use tableName
@@ -45,6 +45,7 @@ export class PathQLServerEntry {
 		}else {
 			this.table = this.constructor.prefix + "_" + this.constructor.name;
 		}
+		this.debug("init object " + this.table);
 		this.generateDatabaseKeys();
 
 		for(const key in this.constructor.fields) {
@@ -62,18 +63,24 @@ export class PathQLServerEntry {
 	 * Method to parse all fields from raw fields
 	 */
 	async parseFromRaw(refresh = false) {
+		this.debug("parse from raw");
 		for(const key in this.constructor.fields) {
+			this.debug("  " + key);
 			if(this["raw" + key] && (!this[key] || refresh)) {
 				const field = this.constructor.fields[key];
 				if(field.type.toUpperCase() == "OBJECT" && field.object) {
+					this.debug("    is object");
 					if(!this.objects[field.object]) {
 						throw new PathQLTypeError({msg: "object is not given in model please check your objects field"});
 					}
+					this.debug("    parse as json if it is a string");
 					const cacheRaw = typeof(this["raw" + key]) != "string" ? this["raw" + key] : JSON.parse(this["raw" + key]);
 					if(field.array) {
+						this.debug("    is array");
 						this[key] = {};
 						for(const objectId of cacheRaw) {
 							this.validate(objectId, Types.INT, key);
+							this.debug("    generate from id " + objectId);
 							this[key][objectId] = await new this.objects[field.object]({id: objectId}, this.db);
 						}
 					}else {
@@ -81,9 +88,12 @@ export class PathQLServerEntry {
 						this[key] = await new this.objects[field.object]({id: cacheRaw}, this.db);
 					}
 				}else {
+					this.debug("    is normal type");
 					this.validate(this["raw" + key], Types[field.type.toUpperCase()], key);
 					this[key] = this["raw" + key];
 				}
+			}else {
+				this.debug("    alredy exists!");
 			}
 		}
 		return true;
@@ -755,5 +765,11 @@ export class PathQLServerEntry {
 		const _crud = splitPermission[splitPermission.length];
 		const _entry = splitPermission[0];
 		const _field = splitPermission.slice(1, splitPermission.length);
+	}
+
+	debug(msg) {
+		if(this.debugLog) {
+			console.log("PathQL > " + msg);
+		}
 	}
 }
