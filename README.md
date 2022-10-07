@@ -78,3 +78,5 @@ To use the `CLI` tests just run the `test.sh` in our `tests/` directory.
 
 To use the `Local` tests copy the entire PathQL folder to your local webserver, execute the `Tests/Local/Server/server.sh` and open the url `http://localhost/pathql/tests/Tests/Client/` in your webbrowser.
 
+## Miscellaneous
+For most people without mathematical knowledge it is not too easy to describe a graph.  That's why I created PathQL, the one path everyone understands.

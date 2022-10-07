@@ -1,54 +1,39 @@
 import { SqlitePathQLDatabaseController } from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
 import { Example } from "pathql/tests/Entrys/Example.pathql.js";
 import { User } from "pathql/tests/Entrys/User.pathql.js";
-
+import {assertEquals} from "https://deno.land/std@0.159.0/testing/asserts.ts";
 
 Deno.test("basis test", async (_t) => {
-	const db = new SqlitePathQLDatabaseController({ "name": "test.db" });
-	const user = await new User({
-		"name": "Test1"
-	}, db);
-	await user.init();
-	await user.save();
+	try {
+		const db = new SqlitePathQLDatabaseController({"name": "test.db"});
+		const user = await new User({
+			"db": db
+		});
+		await user.save();
+	
+		const example = await new Example({
+			"db": db
+		});
+		assertEquals(await example.save(), true);
+	
+		example.name = "Test1";
+		const updateResult = await example.save();
+		assertEquals(updateResult, true);
+		assertEquals(example.name, "Test1");
+	
+		const loadExample = await new Example({
+			"db": db,
+			"token": example.token
+		});
+		const loadResult = await loadExample.load();
+		assertEquals(loadResult, true);
+		assertEquals(example.name, "Test1");
 
-	const example = await new Example({
-		"name": "Test",
-		"email": "test@example.com",
-		"tagline": "My project",
-		"contributors": [user.id],
-		"admin": user.id
-	}, db);
-	await example.init();
+		assertEquals(await example.delete(), true);
 
-	const saveResult = await example.save();
-	if (saveResult) {
-		console.log("[OK] save method works...");
+		assertEquals(await user.delete(), true);
+		db.close();
+	}catch(e) {
+		console.error(e);
 	}
-
-	example.name = "Test1";
-	const updateResult = await example.save();
-	if (updateResult && example.name == "Test1") {
-		console.log("[OK] update method works...");
-	} else {
-		console.error("[ERROR] error in update method");
-	}
-
-	const loadExample = await new Example({
-		"id": example.id
-	}, db);
-	const loadResult = await loadExample.load();
-
-	if (loadResult && loadExample.name == "Test1") {
-		console.log("[OK] load method works...");
-	} else {
-		console.error("[ERROR] error in load method");
-	}
-
-	const deleteResult = await example.delete();
-	if (deleteResult) {
-		console.log("[OK] delete method works...");
-	} else {
-		console.error("[ERROR] error in delete method");
-	}
-	db.close();
 });
