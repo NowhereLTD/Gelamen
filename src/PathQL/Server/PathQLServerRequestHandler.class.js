@@ -198,4 +198,16 @@ export class PathQLServerRequestHandler {
 			return null;
 		}
 	}
+
+	/**
+	 * Add error to client socket
+	 * @param {Socket} socket 
+	 * @param {Error} e 
+	 */
+	async addClientError(socket, e) {
+    if(this.debug) {
+      console.error(e);
+    }
+    socket.error = socket.error += e.message;
+  }
 }
