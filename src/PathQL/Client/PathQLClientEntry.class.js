@@ -14,21 +14,31 @@ export class PathQLClientEntry {
 
 	static name = "PathQLClientEntry";
 
+	/**
+	 * @param {JSON} options 
+	 * @param {Boolean} debug 
+	 */
 	constructor(options = {}, debug = false) {
 		this.debug = debug;
 		this.client = options.client ? options.client : {};
 		for(const method in this.constructor.methods) {
-			this[method] = (data) => {
+			this[method] = async (data) => {
 				const request = {
 					pathql: {}
 				}
 				request.pathql[this.constructor.name] = {};
 				request.pathql[this.constructor.name][method] = data;
 				request.pathql[this.constructor.name].data = this.getFieldNames();
+				const response = await this.send(request);
+				return response;
 			}
 		}
 	}
 
+	/**
+	 * Get a list with all fields as json
+	 * @returns 
+	 */
 	getFieldNames() {
 		const fields = {};
 		for(const field in this.constructor.fields) {
@@ -37,6 +47,11 @@ export class PathQLClientEntry {
 		return fields;
 	}
 
+	/**
+	 * Send a request via client
+	 * @param {JSON} json 
+	 * @returns 
+	 */
 	async send(json) {
 		return await this.client.send(json);
 	}
