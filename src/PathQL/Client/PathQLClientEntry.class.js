@@ -21,14 +21,16 @@ export class PathQLClientEntry {
 	constructor(options = {}, debug = false) {
 		this.debug = debug;
 		this.client = options.client ? options.client : {};
+		this.name = options.name ? options.name : this.constructor.name;
 		for(const method in this.constructor.methods) {
 			this[method] = async (data) => {
 				const request = {
 					pathql: {}
 				}
-				request.pathql[this.constructor.name] = {};
-				request.pathql[this.constructor.name][method] = data;
-				request.pathql[this.constructor.name].data = this.getFieldNames();
+				request.pathql[options.name] = {};
+				request.pathql[options.name][method] = data;
+				request.pathql[options.name].data = this.getFieldNames();
+				console.log(request)
 				const response = await this.send(request);
 				return response;
 			}

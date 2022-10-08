@@ -104,7 +104,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 						static objects = object.objects;
 		
 						constructor() {
-							super({client: client});
+							super({client: client, name: objectName});
 							return (function () {
 								return this;
 							}.bind(this)());
