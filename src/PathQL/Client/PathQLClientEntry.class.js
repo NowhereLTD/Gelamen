@@ -17,7 +17,7 @@ export class PathQLClientEntry {
 	constructor(options = {}, debug = false) {
 		this.debug = debug;
 		this.client = options.client ? options.client : {};
-		for(const method in this.constructor.methods) {
+		for(const method in this.methods) {
 			this[method] = (data) => {
 				const request = {
 					pathql: {}
