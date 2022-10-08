@@ -68,7 +68,7 @@ export class PathQLServerRequestHandler {
 							const answer = {};
 							for(const objName in msg.pathql) {
 								if(this.constructor.objects[objName] != null) {
-									const obj = await new this.constructor.objects[objName].constructor({}, this.db);
+									const obj = await new this.constructor.objects[objName].constructor({db: this.db});
 									try {
 										answer[objName] = await obj.parseRequest({
 											data: msg.pathql[objName],
@@ -142,7 +142,7 @@ export class PathQLServerRequestHandler {
 						}
 					} catch (err) {
 						console.log(err);
-						await this.addClientError(e.target, err);
+						this.addClientError(e.target, err);
 					}
 				}.bind(this));
 
@@ -150,8 +150,8 @@ export class PathQLServerRequestHandler {
 					delete(this.clients[e.target.id]);
 				}.bind(this));
 
-				socket.addEventListener("error", async function(e) {
-					await this.addClientError(socket, e);
+				socket.addEventListener("error", function(e) {
+					this.addClientError(socket, e);
 				}.bind(this));
 
 				connection.respondWith(response);
@@ -204,7 +204,7 @@ export class PathQLServerRequestHandler {
 	 * @param {Socket} socket 
 	 * @param {Error} e 
 	 */
-	async addClientError(socket, e) {
+	addClientError(socket, e) {
     if(this.debug) {
       console.error(e);
     }

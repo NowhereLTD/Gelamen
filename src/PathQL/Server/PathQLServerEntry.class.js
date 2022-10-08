@@ -577,7 +577,7 @@
 		 let statement = `SELECT token FROM ${this.table} `;
 		 let whereStatement = `WHERE `;
 		 let searchStatement = ``;
-		 let searchData = [];
+		 const searchData = [];
 		 let whereData = [];
  
 		 for(const key in data) {
