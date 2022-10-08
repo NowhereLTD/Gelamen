@@ -95,8 +95,8 @@ export class PathQLClientRequestHandler extends EventTarget {
 			});
 	
 			const client = this;
-			for(const objectName in objects) {
-				const object = objects[objectName];
+			for(const objectName in objects.objects) {
+				const object = objects.objects[objectName];
 				if(!object.error) {
 					this.objects[objectName] = class extends PathQLClientEntry {
 						static fields = object.fields;

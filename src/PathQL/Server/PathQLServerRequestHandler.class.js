@@ -120,12 +120,13 @@ export class PathQLServerRequestHandler {
 							socket.send(JSON.stringify(answer));
 						}else if(msg.getAllObjects) {
 							const answer = {};
+							answer.objects = {};
 							for(const objectName in this.constructor.objects) {
 								const object = this.getObject(objectName);
 								if(object) {
-									answer[objectName] = object;
+									answer.objects[objectName] = object;
 								}else {
-									answer[objectName] = {
+									answer.objects[objectName] = {
 										error: {
 											msg: "Object not exists!"
 										}
