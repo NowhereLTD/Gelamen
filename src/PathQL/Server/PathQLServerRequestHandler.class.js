@@ -121,7 +121,7 @@ export class PathQLServerRequestHandler {
 						}else if(msg.getAllObjects) {
 							const answer = {};
 							answer.objects = {};
-							for(const objectName in this.constructor.objects) {
+							for(const objectName in this.objects) {
 								const object = this.getObject(objectName);
 								if(object) {
 									answer.objects[objectName] = object;
@@ -167,8 +167,8 @@ export class PathQLServerRequestHandler {
 	}
 
 	getObject(objectName) {
-		if(this.constructor.objects[objectName] != null) {
-			const object = this.constructor.objects[objectName];
+		if(this.objects[objectName] != null) {
+			const object = this.objects[objectName];
 			const fieldArray = {};
 			for(const key in object.fields) {
 				// TODO: check the user permission
