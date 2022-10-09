@@ -70,6 +70,7 @@ export class PathQLServerRequestHandler {
 							for(const objName in msg.pathql) {
 								if(this.objects[objName] != null) {
 									try {
+										msg.pathql[objName].data = msg.pathql[objName].data ? msg.pathql[objName].data : {};
 										if(msg.pathql[objName].data.token != null && msg.pathql[objName].data.token != "") {
 											if(this.objectCache[msg.pathql[objName].data.token] != null) {
 												answer[objName] = await this.objectCache[msg.pathql[objName].data.token].parseRequest({
