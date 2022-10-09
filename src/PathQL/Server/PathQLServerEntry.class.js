@@ -911,8 +911,8 @@ export class PathQLServerEntry {
 					data[key] = null;
 				}
 			} else if(key == "data") {
-				for(const name in request.data.data[key]) {
-					const field = request.data.data[key][name];
+				for(const name in request.data.data) {
+					const field = request.data.data[name];
 					if(field != "") {
 						this[name] = field;
 					}
