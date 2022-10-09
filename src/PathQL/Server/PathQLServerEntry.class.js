@@ -15,6 +15,7 @@
  import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
  import {PathQLNoPermissionError} from "pathql/src/PathQL/Error/PathQLNoPermissionError.class.js";
  import {PathQLFieldMissingError} from "pathql/src/PathQL/Error/PathQLFieldMissingError.class.js";
+ import {PathQLTypeError} from "pathql/src/PathQL/Error/PathQLTypeError.class.js";
  
  import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
  import Search from "pathql/etc/data/search.json" assert {type: "json"};
@@ -94,6 +95,7 @@
 				 this[key] = {};
 			 }
 		 }
+		 obj.objects = {};
 		 obj.prefix = obj.constructor.prefix;
 		 obj.methods = obj.constructor.methods;
 		 obj.isLocked = false;
@@ -405,6 +407,7 @@
 		* TODO: check if value is null
 		*/
 	 validate(value, type, key) {
+		this.log(`Validate ${value} is type ${type} in ${key}`, 2);
 		 if(value == undefined) {
 			 console.error(value + " : " + key + " is undefined!");
 			 return false;
@@ -415,7 +418,6 @@
 		 if(value.toString().match(type.regex)) {
 			 return true;
 		 }
-		 console.log(this.objects)
 		 if(this.objects[key]) {
 			 throw new PathQLTypeError({msg: "element is no object", id: this.objects[key].id});
 		 }else {
