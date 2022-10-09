@@ -895,6 +895,7 @@ export class PathQLServerEntry {
 	async parseRequest(request = {}) {
 		let data = {};
 		const fields = {};
+		this.log(`Parse Request ${JSON.stringify(request)}`, 3)
 		for(const key in request.data) {
 			this.checkPermission(key, request);
 			if(this.constructor.fields[key] != null) {
