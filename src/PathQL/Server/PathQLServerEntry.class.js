@@ -148,6 +148,7 @@
 		 await this.waitToUnlock();
 		 this.isLocked = true;
 		 this.log(`<SQL> ${statement}`);
+		 this.log(`<SQL DATA> ${JSON.stringify(data)}`);
 		 const cacheData = await this.db.runPrepared(statement, data);
 		 this.isLocked = false;
 		 return cacheData;
