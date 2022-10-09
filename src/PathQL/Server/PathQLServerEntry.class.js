@@ -15,7 +15,6 @@
  import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
  import {PathQLNoPermissionError} from "pathql/src/PathQL/Error/PathQLNoPermissionError.class.js";
  import {PathQLFieldMissingError} from "pathql/src/PathQL/Error/PathQLFieldMissingError.class.js";
- import {PathQLTypeError} from "pathql/src/PathQL/Error/PathQLTypeError.class.js";
  
  import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
  import Search from "pathql/etc/data/search.json" assert {type: "json"};
@@ -42,40 +41,32 @@
 			 this.table = this.constructor.prefix + "_" + this.constructor.name;
 		 }
  
-		 let obj = this;
 		 this.token = options.token != null ? options.token : null;
-		 if(this.token != null) {
-			 this.createWindowObjects();
-			 if(window.objects[this.table][this.token] != null) {
-				 obj = window.objects[this.table][this.token];
-			 }else {
-				 window.objects[this.table][this.token] = obj;
-			 }
-		 }
+		 this.locks = {};
 		 this.checkPermission("load", options.request);
  
-		 obj.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
-		 obj.isClient = options.isClient ? options.isClient : false;
+		 this.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
+		 this.isClient = options.isClient ? options.isClient : false;
  
-		 obj.log("Prove the options variables!");
-		 if(!obj.isClient) {
+		 this.log("Prove the options variables!");
+		 if(!this.isClient) {
 			 if(options.db instanceof Object) {
-				 obj.db = options.db;
+				 this.db = options.db;
 			 }else {
-				 obj.log("Database is no instance of PathQLDatabaseController", 1);
+				 this.log("Database is no instance of PathQLDatabaseController", 1);
 				 throw "Database is no instance of PathQLDatabaseController";
 			 }
 		 }
-		 obj.force = options.force ? options.force : false;
-		 obj.storeHistory = options.history ? options.history : false;
-		 obj.historyArray = [];
-		 obj.rollbackArray = [];
+		 this.force = options.force ? options.force : false;
+		 this.storeHistory = options.history ? options.history : false;
+		 this.historyArray = [];
+		 this.rollbackArray = [];
  
-		 obj.log("Load fields, prefix and methods from constructor.");
-		 obj.fields = obj.constructor.fields;
+		 this.log("Load fields, prefix and methods from constructor.");
+		 this.fields = this.constructor.fields;
 		 // Prove fields and optional add id and token field
-		 if(obj.fields.id == null) {
-			 obj.fields.id = {
+		 if(this.fields.id == null) {
+			 this.fields.id = {
 				 "type": "Int",
 				 "db": {
 					 "primary": true,
@@ -84,8 +75,8 @@
 			 }
 		 }
  
-		 if(obj.fields.token == null) {
-			 obj.fields.token = {
+		 if(this.fields.token == null) {
+			 this.fields.token = {
 				 "type": "String"
 			 }
 		 }
@@ -95,13 +86,13 @@
 				 this[key] = {};
 			 }
 		 }
-		 obj.objects = {};
-		 obj.prefix = obj.constructor.prefix;
-		 obj.methods = obj.constructor.methods;
-		 obj.isLocked = false;
-		 obj.waitForUnlockTimer = 10;
-		 obj.generateDatabaseKeys();
-		 return obj;
+		 this.objects = {};
+		 this.prefix = this.constructor.prefix;
+		 this.methods = this.constructor.methods;
+		 this.isLocked = false;
+		 this.waitForUnlockTimer = 10;
+		 this.generateDatabaseKeys();
+		 return this;
 	 }
  
 	 /**
@@ -113,18 +104,6 @@
 	 log(msg, level = 3) {
 		 if(level <= this.logging) {
 			 console.log("[PATHQL] " + msg);
-		 }
-	 }
- 
-	 /**
-		* Create an global window object to prevent the redudant creation of an pathql server entry if it not exists
-		*/
-	 createWindowObjects() {
-		 if(window.objects == null) {
-			 window.objects = {};
-		 }
-		 if(window.objects[this.table] == null) {
-			 window.objects[this.table] = {};
 		 }
 	 }
  
@@ -423,11 +402,6 @@
 			console.error("Validation failed!");
 			return false;
 		}
-		/*if(this.objects[key]) {
-		 throw new PathQLTypeError({msg: "element is no object", id: this.objects[key].id});
-		}else {
-		 throw new PathQLTypeError({msg: "element " + key + " is not exists"});
-		}*/
 	}
  
 	 /**
@@ -556,8 +530,6 @@
 				 throw new PathQLNotExistsError({msg: `Cannot load object ${this.constructor.name} with token ${this.token}!`});
 			 }
 			 this.parseFromRaw(data);
-			 this.createWindowObjects();
-			 window.objects[this.table][this.token] = this;
  
 			 // load all connected objects
 			 for(const key in this.fields) {
@@ -971,5 +943,91 @@
 		 }
 		 return data;
 	 }
- 
+
+	/**
+	 * Methods to handle the update of an single key and the lock of an single key
+	 */
+	/**
+	 * Lock an specific key
+	 * @param {String} key 
+	 * @param {JSON} request 
+	 * @returns 
+	 */
+	async lockKey(key, request = {}) {
+		await this.checkPermission(`${key}.lock.close`, request);
+		if(this.fields[key] != null) {
+			if(!this.locks[key]) {
+				this.locks[key] = true;
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			this.log(`Cannot find key ${key} to lock.`, 2);
+			return false;
+		}
+	}
+
+/**
+ * Lock a specific key
+ * @param {String} key 
+ * @param {Request} request 
+ * @returns 
+ */
+	async unlockKey(key, request = {}) {
+		await this.checkPermission(`${key}.lock.open`, request);
+		if(this.fields[key] != null) {
+			if(this.locks[key]) {
+				this.locks[key] = false;
+				return true;
+			}else {
+				return false;
+			}
+		}else {
+			this.log(`Cannot find key ${key} to unlock.`, 2);
+			return false;
+		}
+	}
+
+	/**
+	 * Check if a specific key is locked
+	 * @param {String} key 
+	 * @param {Request} request 
+	 * @returns 
+	 */
+	isKeyLocked(key, request) {
+		this.checkPermission(`${key}.lock.check`, request);
+		return this.locks[key];
+	}
+
+	/**
+	 * Update an specific key
+	 * @param {JSON} data 
+	 * @param {Request} request 
+	 * @returns 
+	 */
+	async updateKey(data, request = {}) {
+		if(this.token == null) {
+			this.log(`Cannot update object ${this.constructor.name} without token!`);
+			throw new PathQLNotExistsError({msg: `Cannot update object ${this.constructor.name} without token!`});
+		}
+		const key = data.key;
+		const value = data.value;
+		this.checkPermission(`${key}.update`, request);
+		if(!this.isKeyLocked(key, request)) {
+			try {
+				const statement = `UPDATE ${this.table} SET ${key} = ? WHERE token = ?;`
+				await this.runSQL(statement, [value, this.token]);
+			}catch(e) {
+				this.log(`Update key ${key} failed with ${e}`);
+				if(!this.force) {
+					throw e;
+				}
+				return null;
+			}
+		}else {
+			this.log(`Key is locked at the moment.`, 2);
+			return false;
+		}
+	}
  }

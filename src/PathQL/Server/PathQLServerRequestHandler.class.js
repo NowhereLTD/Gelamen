@@ -12,6 +12,7 @@ export class PathQLServerRequestHandler {
 		this.debug = true;
 		this.run = false;
 		this.objects = {};
+		this.objectCache = {};
 		if(!this.db) {
 			throw new PathQLNotExistsError({msg: "database not given!"});
 		}
@@ -69,6 +70,17 @@ export class PathQLServerRequestHandler {
 							for(const objName in msg.pathql) {
 								if(this.objects[objName] != null) {
 									try {
+										if(msg.pathql[objName].data.token != null && msg.pathql[objName].data.token != "") {
+											if(this.objectCache[msg.pathql[objName].data.token] != null) {
+												answer[objName] = await this.objectCache[msg.pathql[objName].data.token].parseRequest({
+													data: msg.pathql[objName],
+													settings: {
+														connection: socket
+													}
+												});
+												continue;
+											}
+										}
 										const obj = await new this.objects[objName]({db: this.db});
 										answer[objName] = await obj.parseRequest({
 											data: msg.pathql[objName],
@@ -76,6 +88,9 @@ export class PathQLServerRequestHandler {
 												connection: socket
 											}
 										});
+										if(obj.token && obj.token != "") {
+											this.objectCache[obj.token] = obj;
+										}
 									} catch (e) {
 										console.error(e);
 										answer[objName] = {
