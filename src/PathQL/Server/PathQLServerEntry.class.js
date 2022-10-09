@@ -27,8 +27,9 @@
 	 static methods = {
 		 "search": {},
 		 "count": {},
-		 "addObj": {},
-		 "rmObj": {}
+		 "lockKey": {},
+		 "unlockKey": {},
+		 "unlockKey": {},
 	 };
  
 	 /**
@@ -502,7 +503,7 @@
 		* @returns 
 		*/
 	 async load(request = {}) {
-		 this.checkPermission("load", request);
+		 this.checkPermission("load", request = {});
 		 try {
 			 if(this.token == null) {
 				 this.log(`Cannot load object ${this.constructor.name} if it does not contain an token!`);
@@ -553,7 +554,7 @@
 		* @param {Request} request 
 		* @returns
 		*/
-	 async search(data, request = null) {
+	 async search(data, request = {}) {
 		 let statement = `SELECT token FROM ${this.table} `;
 		 let whereStatement = `WHERE `;
 		 let searchStatement = ``;
@@ -745,11 +746,14 @@
  
 	 /**
 		* Add an entity by key and token
-		* @param {String} key 
-		* @param {String|Object} tokenOrObject 
+		* @param {JSON} data (key, token)
+		* @param {Request} request 
 		* @returns 
 		*/
-	 async add(key, tokenOrObject) {
+	async add(data, request = {}) {
+		const key = data.key;
+		const tokenOrObject = data.token;
+		this.checkPermission(`${key}.add`, request);
 		 if(this.token != null) {
 			 try {
 				 let token = tokenOrObject;
@@ -786,11 +790,14 @@
  
 	 /**
 		* Remove an entity by key and token
-		* @param {String} key 
-		* @param {String|Object} tokenOrObject 
+		* @param {JSON} data (key, token)
+		* @param {Request} request 
 		* @returns 
 		*/
-	 async remove(key, tokenOrObject) {
+	 async remove(data, request = {}) {
+		const key = data.key;
+		const tokenOrObject = data.token;
+		this.checkPermission(`${key}.remove`, request);
 		 if(this.token != null) {
 			 try {
 				 let token = tokenOrObject;
@@ -825,11 +832,14 @@
  
 	 /**
 		* Remove all entitys by key and token
-		* @param {String} key 
-		* @param {String} token 
+		* @param {JSON} data (key, token)
+		* @param {Request} request 
 		* @returns 
 		*/
-	 async removeAll(key, token) {
+	 async removeAll(data, request = {}) {
+		const key = data.key;
+		const token = data.token;
+		this.checkPermission(`${key}.removeAll`, request);
 		 try {
 			 const field = this.fields[key];
 			 if(this[key][token] == null) {
@@ -848,7 +858,13 @@
 		 }
 	 }
  
-	 async loadAll(key) {
+	 /**
+		* Load all fields from a key
+		* @param {String} key 
+		* @returns 
+		*/
+	 async loadAll(key, request = {}) {
+		this.checkPermission(`${key}.loadAll`, request);
 		 try {
 			 const field = this.fields[key];
 			 const foreignObj = await new this.objects[field.object]({"db": this.db});

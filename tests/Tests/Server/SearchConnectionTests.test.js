@@ -23,7 +23,7 @@ Deno.test("search connection test", async (_t) => {
 		await user.save();
 
 		console.log("[OK] connect user and group object");
-		assertEquals(await group.add("users", user), true);
+		assertEquals(await group.add({key: "users", token: user}), true);
 
 		// TODO: test to get all groups connections
 		// await group.cObj["users"].getConnections(user, group);

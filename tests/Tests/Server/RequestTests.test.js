@@ -22,8 +22,8 @@ Deno.test("request test", async (_t) => {
 			"db": db
 		});
 		await example.save();
-		await example.add("contributors", user);
-		await example.add("admin", user);
+		await example.add({key: "contributors", token: user});
+		await example.add({key: "admin", token: user});
 
 		const requestExample = await new Example({"db": db});
 		const data = await requestExample.parseRequest({

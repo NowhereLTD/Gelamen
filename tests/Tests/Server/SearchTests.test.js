@@ -21,7 +21,7 @@ Deno.test("basis test", async (_t) => {
 			"db": db
 		});
 		await example.save();
-		await example.add("admin", user);
+		await example.add({key: "admin", token: user});
 
 		const requestExample = await new Example({"db": db});
 

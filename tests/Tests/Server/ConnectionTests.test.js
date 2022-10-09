@@ -23,12 +23,12 @@ Deno.test("basis test", async (_t) => {
 		await user.save();
 
 		console.log("[OK] connect user and group object");
-		assertEquals(await group.add("users", user), true);
+		assertEquals(await group.add({key: "users", token: user}), true);
 
 		// TODO: test to get all groups connections
 		//await group.cObj["users"].getConnections(user, group);
 
-		assertEquals(await group.remove("users", user), true);
+		assertEquals(await group.remove({key: "users", token: user}), true);
 
 		// Clear data
 		console.log("[OK] clear connection test data");
