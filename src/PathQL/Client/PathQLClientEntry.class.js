@@ -29,8 +29,6 @@ export class PathQLClientEntry {
 				}
 				request.pathql[options.name] = {};
 				request.pathql[options.name][method] = data;
-				request.pathql[options.name].data = this.getFieldNames();
-				console.log(request)
 				const response = await this.send(request);
 				return response;
 			}
