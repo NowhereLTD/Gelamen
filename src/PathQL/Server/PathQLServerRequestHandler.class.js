@@ -69,7 +69,7 @@ export class PathQLServerRequestHandler {
 							for(const objName in msg.pathql) {
 								if(this.objects[objName] != null) {
 									try {
-										console.log(this.objects[objName].constructor);
+										console.log(new this.objects[objName].constructor());
 										const obj = await new this.objects[objName].constructor({db: this.db});
 										answer[objName] = await obj.parseRequest({
 											data: msg.pathql[objName],
