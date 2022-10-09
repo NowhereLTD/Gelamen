@@ -924,7 +924,7 @@ export class PathQLServerEntry {
 		}
 
 		if(request.data.data && request.data.data.token != null) {
-			const jsonData = await this.getFieldJSON(fields, request);
+			const jsonData = await this.getFieldJSON(request.data.data, request);
 			data = {
 				...data,
 				...jsonData
@@ -940,7 +940,7 @@ export class PathQLServerEntry {
 	 * @returns 
 	 */
 	async getFieldJSON(fields, request = {}) {
-		const obj = await new this.constructor({ db: this.db, token: request.data.token });
+		const obj = await new this.constructor({ db: this.db, token: request.data.data.token });
 		if(!await obj.load(request)) {
 			throw new PathQLNotExistsError({ msg: `object ${obj.constructor.name} with token ${obj.token} not found` });
 		}
