@@ -595,7 +595,6 @@
 			 }else if(field && cacheField.type && Where[cacheField.type.toUpperCase()] && cacheField.values && field.type.toUpperCase() != "OBJECT") {
 				 whereStatement = whereStatement + `${key} ${Where[cacheField.type.toUpperCase()]} AND `;
 				 for(const value of data[key].values) {
-					 this.validate(value, this.db.getType(field.type), key);
 					 whereData.push(value);
 				 }
 			 }else if(field && data[key].type && Where[data[key].type.toUpperCase()] && data[key].values) {
