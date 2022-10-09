@@ -145,6 +145,7 @@
 		 if(this.isClient) {
 			 return null;
 		 }
+
 		 await this.waitToUnlock();
 		 this.isLocked = true;
 		 this.log(`<SQL> ${statement}`);
