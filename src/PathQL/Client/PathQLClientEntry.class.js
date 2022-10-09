@@ -5,8 +5,7 @@ export class PathQLClientEntry {
 	static fields = {};
 
 	// pathql
-	static methods = {
-	};
+	static methods = {};
 
 	static name = "PathQLClientEntry";
 

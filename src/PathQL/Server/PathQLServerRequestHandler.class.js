@@ -119,7 +119,7 @@ export class PathQLServerRequestHandler {
 							}));
 						}else if(msg.getObject) {
 							const answer = {};
-							const object = this.getObject(msg.getObject);
+							const object = await this.getObject(msg.getObject);
 							if(object) {
 								answer[msg.getObject] = object;
 							}else {
@@ -138,7 +138,7 @@ export class PathQLServerRequestHandler {
 							const answer = {};
 							answer.objects = {};
 							for(const objectName in this.objects) {
-								const object = this.getObject(objectName);
+								const object = await this.getObject(objectName);
 								if(object) {
 									answer.objects[objectName] = object;
 								}else {
@@ -182,9 +182,9 @@ export class PathQLServerRequestHandler {
 		}
 	}
 
-	getObject(objectName) {
+	async getObject(objectName) {
 		if(this.objects[objectName] != null) {
-			const object = this.objects[objectName];
+			const object = await new this.objects[objectName]({db: this.db});
 			const fieldArray = {};
 			for(const key in object.fields) {
 				// TODO: check the user permission
