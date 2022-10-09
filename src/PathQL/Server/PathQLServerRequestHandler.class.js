@@ -1,7 +1,6 @@
 import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
 
 export class PathQLServerRequestHandler {
-	static objects = {};
 
 	constructor(options = {}) {
 		this.port = options.port ? options.port : 9080;
@@ -12,6 +11,7 @@ export class PathQLServerRequestHandler {
 		this.clients = {};
 		this.debug = true;
 		this.run = false;
+		this.objects = {};
 		if(!this.db) {
 			throw new PathQLNotExistsError({msg: "database not given!"});
 		}
@@ -68,8 +68,8 @@ export class PathQLServerRequestHandler {
 							const answer = {};
 							for(const objName in msg.pathql) {
 								if(this.objects[objName] != null) {
-									const obj = await new this.objects[objName].constructor({db: this.db});
 									try {
+										const obj = await new this.objects[objName].constructor({db: this.db});
 										answer[objName] = await obj.parseRequest({
 											data: msg.pathql[objName],
 											settings: {
@@ -77,7 +77,7 @@ export class PathQLServerRequestHandler {
 											}
 										});
 									} catch (e) {
-										console.log(e);
+										console.error(e);
 										answer[objName] = {
 											error: e.toString()
 										}
