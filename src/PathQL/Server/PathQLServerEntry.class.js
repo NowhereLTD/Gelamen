@@ -54,7 +54,7 @@
 		 }
 		 this.checkPermission("load", options.request);
  
-		 obj.logging = Logging[options.logging] != null ? options.logging : Logging.ERROR;
+		 obj.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
 		 obj.isClient = options.isClient ? options.isClient : false;
  
 		 obj.log("Prove the options variables!");
