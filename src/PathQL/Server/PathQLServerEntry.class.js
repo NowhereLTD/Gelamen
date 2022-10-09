@@ -415,6 +415,7 @@
 		 if(value.toString().match(type.regex)) {
 			 return true;
 		 }
+		 console.log(this.objects)
 		 if(this.objects[key]) {
 			 throw new PathQLTypeError({msg: "element is no object", id: this.objects[key].id});
 		 }else {
