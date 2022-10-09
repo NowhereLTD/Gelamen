@@ -6,10 +6,6 @@ export class PathQLClientEntry {
 
 	// pathql
 	static methods = {
-		"search": {},
-		"count": {},
-		"addObj": {},
-		"rmObj": {}
 	};
 
 	static name = "PathQLClientEntry";
@@ -43,7 +39,7 @@ export class PathQLClientEntry {
 	getFieldNames() {
 		const fields = {};
 		for(const field in this.constructor.fields) {
-			fields[field] = "";
+			fields[field] = this[field] != null ? this[field] : "";
 		}
 		return fields;
 	}
