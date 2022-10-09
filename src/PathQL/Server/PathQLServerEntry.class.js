@@ -406,24 +406,27 @@
 		* Validate a specific value by predefined regex types.
 		* TODO: check if value is null
 		*/
-	 validate(value, type, key) {
-		this.log(`Validate ${value} is type ${type} in ${key}`, 2);
-		 if(value == undefined) {
-			 console.error(value + " : " + key + " is undefined!");
-			 return false;
+	validate(value, type, key) {
+		this.log(`Validate ${value} is type ${type.database} in ${key}`, 2);
+		if(value == undefined) {
+			console.error(value + " : " + key + " is undefined!");
+			return false;
+		}
+		if(!type) {
+			type = this.db.getType("INT");
 		 }
-		 if(!type) {
-			 type = this.db.getType("INT");
-		 }
-		 if(value.toString().match(type.regex)) {
-			 return true;
-		 }
-		 if(this.objects[key]) {
-			 throw new PathQLTypeError({msg: "element is no object", id: this.objects[key].id});
-		 }else {
-			 throw new PathQLTypeError({msg: "element " + key + " is not exists"});
-		 }
-	 }
+		if(value.toString().match(type.regex)) {
+			return true;
+		}else {
+			console.error("Validation failed!");
+			return false;
+		}
+		/*if(this.objects[key]) {
+		 throw new PathQLTypeError({msg: "element is no object", id: this.objects[key].id});
+		}else {
+		 throw new PathQLTypeError({msg: "element " + key + " is not exists"});
+		}*/
+	}
  
 	 /**
 		* This method try to create or save the entry in to the database
