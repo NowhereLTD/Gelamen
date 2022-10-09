@@ -911,8 +911,8 @@ export class PathQLServerEntry {
 					data[key] = null;
 				}
 			} else if(key == "data") {
-				for(const name in request.data[key]) {
-					const field = request.data[key][name];
+				for(const name in request.data.data[key]) {
+					const field = request.data.data[key][name];
 					if(field != "") {
 						this[name] = field;
 					}
@@ -922,7 +922,7 @@ export class PathQLServerEntry {
 			}
 		}
 
-		if(request.data.token != null) {
+		if(request.data.data && request.data.data.token != null) {
 			const jsonData = await this.getFieldJSON(fields, request);
 			data = {
 				...data,
