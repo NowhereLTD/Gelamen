@@ -26,9 +26,30 @@ export class PathQLClientEntry {
 				request.pathql[options.name][method] = data;
 				request.pathql[options.name].data = this.getFieldNames();
 				const response = await this.send(request);
-				return response;
+				const newResponse = {};
+				newResponse.obj = this.parseEntity(response);
+				newResponse[method] = [];
+				for(const data of response[method]) {
+					newResponse[method].push(this.parseEntity(data));
+				}
+				return newResponse;
 			}
 		}
+	}
+
+	/**
+	 * Parse an entity from data with token
+	 * @param {JSON} data 
+	 * @returns 
+	 */
+	parseEntity(data) {
+		const obj = await this.constructor({client: this.client, name: this.name}, this.debug);
+			for(const key of obj.constructor.fields) {
+				if(data[key]) {
+					obj[key] = data[key];
+				}
+			}
+			return obj;
 	}
 
 	/**
