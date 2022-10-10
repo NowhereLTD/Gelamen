@@ -16,21 +16,20 @@ export class PathQLClientEntry {
 	constructor(options = {}, debug = false) {
 		this.debug = debug;
 		this.client = options.client ? options.client : {};
-		this.name = options.name ? options.name : this.constructor.name;
+		this.internal_name = options.name ? options.name : this.constructor.name;
 		for(const method in this.constructor.methods) {
 			this[method] = async (data) => {
 				const request = {
 					pathql: {}
 				}
-				request.pathql[options.name] = this.getFieldNames();
-				request.pathql[options.name][method] = data;
+				request.pathql[this.internal_name] = this.getFieldNames();
+				request.pathql[this.internal_name][method] = data;
 				const response = await this.send(request);
-				console.log(response)
 				const newResponse = {};
-				newResponse.obj = await this.parseEntity(response[this.name]);
+				newResponse.obj = await this.parseEntity(response[this.internal_name]);
 				newResponse[method] = [];
-				if(response[method]) {
-					for(const data of response[this.name][method]) {
+				if(response[this.internal_name][method]) {
+					for(const data of response[this.internal_name][method]) {
 						newResponse[method].push(await this.parseEntity(data));
 					}
 				}
@@ -45,7 +44,7 @@ export class PathQLClientEntry {
 	 * @returns 
 	 */
 	async parseEntity(data) {
-		const obj = await new this.client.objects[this.name]({client: this.client, name: this.name}, this.debug);
+		const obj = await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
 			for(const key in this.constructor.fields) {
 				if(data[key]) {
 					obj[key] = data[key];
