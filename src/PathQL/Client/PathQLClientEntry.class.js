@@ -26,10 +26,10 @@ export class PathQLClientEntry {
 				request.pathql[options.name][method] = data;
 				const response = await this.send(request);
 				const newResponse = {};
-				newResponse.obj = this.parseEntity(response);
+				newResponse.obj = await this.parseEntity(response);
 				newResponse[method] = [];
 				for(const data of response[method]) {
-					newResponse[method].push(this.parseEntity(data));
+					newResponse[method].push(await this.parseEntity(data));
 				}
 				return newResponse;
 			}
@@ -41,7 +41,7 @@ export class PathQLClientEntry {
 	 * @param {JSON} data 
 	 * @returns 
 	 */
-	parseEntity(data) {
+	async parseEntity(data) {
 		const obj = await this.constructor({client: this.client, name: this.name}, this.debug);
 			for(const key of obj.constructor.fields) {
 				if(data[key]) {
