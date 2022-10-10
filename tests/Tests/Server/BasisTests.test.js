@@ -35,5 +35,7 @@ Deno.test("basis test", async (_t) => {
 		db.close();
 	}catch(e) {
 		console.error(e);
+		db.close();
+		throw e;
 	}
 });

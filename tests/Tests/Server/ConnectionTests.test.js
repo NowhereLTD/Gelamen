@@ -37,6 +37,8 @@ Deno.test("basis test", async (_t) => {
 	} catch (e) {
 		console.log(e);
 		console.log("[Error] test failed cannot connect objects...");
+		db.close();
+		throw e;
 	}
 	db.close();
 });
