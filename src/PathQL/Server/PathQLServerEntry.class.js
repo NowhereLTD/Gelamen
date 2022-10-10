@@ -26,10 +26,13 @@ export class PathQLServerEntry {
 	static prefix = "pql";
 	static methods = {
 		"search": {},
+		"store": {},
+		"drop": {},
 		"count": {},
 		"lockKey": {},
 		"unlockKey": {},
-		"unlockKey": {},
+		"updateKey": {},
+		"isKeyLocked": {}
 	};
 
 	/**
@@ -406,6 +409,13 @@ export class PathQLServerEntry {
 	}
 
 	/**
+	 * Delete method for client
+	 */
+	async store(_data, request = {}) {
+		return await this.save(request);
+	}
+	
+	/**
 	 * This method try to create or save the entry in to the database
 	 * @returns bool 
 	 */
@@ -461,6 +471,13 @@ export class PathQLServerEntry {
 			}
 			return false;
 		}
+	}
+
+	/**
+	 * Delete method for client
+	 */
+	 async drop(_data, request = {}) {
+		return await this.delete(request);
 	}
 
 	/**
@@ -947,7 +964,8 @@ export class PathQLServerEntry {
 					fields[key] = {};
 				}
 				if(!fields[key].data) {
-					fields[key].data = fields[key];
+					const cacheFields = JSON.parse(JSON.stringify(fields[key]));
+					fields[key].data = cacheFields;
 				}
 				fields[key].settings = request.settings;
 				data[key] = [];
@@ -1047,4 +1065,36 @@ export class PathQLServerEntry {
 			return false;
 		}
 	}
+
+	/**
+	 * count all elements by by different parameters
+	 */
+	async count(data, request = {}) {
+		this.checkPermission("count", request);
+		let statement = `SELECT COUNT(id) FROM ` + this.table;
+		let whereStatement = " WHERE ";
+		let isWhere = false;
+		const whereData = [];
+		if(data) {
+			for(const key in data) {
+				if(key == "data") {
+					continue;
+				}
+				if(this.constructor.fields[key] != null && data[key].type != null && Where[data[key].type.toUpperCase()] != null && data[key].values != null) {
+					isWhere = true;
+					whereStatement = whereStatement + key + " " + Where[data[key].type.toUpperCase()] + " AND ";
+					for(const value of data[key].values) {
+						whereData.push(value);
+					}
+				}
+			}
+			whereStatement = whereStatement.slice(0, -5);
+			if(!isWhere) {
+				whereStatement = "";
+			}
+			statement = statement + whereStatement + ";";
+			const result = await this.db.runPrepared(statement, whereData);
+				return result.result[0][0];
+		}
+	}	
 }
