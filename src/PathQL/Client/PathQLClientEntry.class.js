@@ -28,8 +28,10 @@ export class PathQLClientEntry {
 				const newResponse = {};
 				newResponse.obj = await this.parseEntity(response);
 				newResponse[method] = [];
-				for(const data of response[method]) {
-					newResponse[method].push(await this.parseEntity(data));
+				if(response[method]) {
+					for(const data of response[method]) {
+						newResponse[method].push(await this.parseEntity(data));
+					}
 				}
 				return newResponse;
 			}

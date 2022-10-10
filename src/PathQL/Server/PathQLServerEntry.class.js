@@ -916,8 +916,8 @@ export class PathQLServerEntry {
 			}
 		}
 
-		if(request.data.data && request.data.token != null) {
-			const jsonData = await this.getFieldJSON(request.data, request);
+		if(request.data.token != null) {
+			const jsonData = await this.getFieldJSON(fields, request);
 			data = {
 				...data,
 				...jsonData
