@@ -24,16 +24,7 @@ import Where from "pathql/etc/data/where.json" assert {type: "json"};
 export class PathQLServerEntry {
 	static fields = {};
 	static prefix = "pql";
-	static methods = {
-		"search": {},
-		"store": {},
-		"drop": {},
-		"count": {},
-		"lockKey": {},
-		"unlockKey": {},
-		"updateKey": {},
-		"isKeyLocked": {}
-	};
+	static methods = {};
 
 	/**
 	 * @param {JSON} options 
@@ -92,7 +83,17 @@ export class PathQLServerEntry {
 		}
 		this.objects = {};
 		this.prefix = this.constructor.prefix;
-		this.methods = this.constructor.methods;
+		this.methods = {
+			"search": {},
+			"store": {},
+			"drop": {},
+			"count": {},
+			"lockKey": {},
+			"unlockKey": {},
+			"updateKey": {},
+			"isKeyLocked": {}
+		};
+		this.methods.concat(this.constructor.methods)
 		this.isLocked = false;
 		this.waitForUnlockTimer = 10;
 		this.generateDatabaseKeys();
@@ -581,6 +582,7 @@ export class PathQLServerEntry {
 		for(const key in data) {
 			const cacheField = data[key];
 			const field = this.fields[key];
+			// TODO: Move the generation of where and search out to an internal method
 			if(Search[key.toUpperCase()]) {
 				searchStatement = searchStatement + ` ${Search[key.toUpperCase()]}`;
 				searchData.push(cacheField);
