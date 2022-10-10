@@ -53,6 +53,7 @@ Deno.test("basis test", async (_t) => {
       }
     });
 
+    console.log(data)
     assertEquals(data.search.length, 1);
 
     // Clear data

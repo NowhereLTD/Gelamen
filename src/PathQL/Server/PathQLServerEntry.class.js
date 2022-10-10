@@ -93,7 +93,11 @@ export class PathQLServerEntry {
 			"updateKey": {},
 			"isKeyLocked": {}
 		};
-		this.methods.concat(this.constructor.methods)
+		this.methods = {
+			...this.methods,
+			...this.constructor.methods
+		}
+
 		this.isLocked = false;
 		this.waitForUnlockTimer = 10;
 		this.generateDatabaseKeys();
@@ -710,8 +714,8 @@ export class PathQLServerEntry {
 	 */
 	async createTable() {
 		let preparedCreateData = "";
-		for(const key in this.constructor.fields) {
-			const field = this.constructor.fields[key];
+		for(const key in this.fields) {
+			const field = this.fields[key];
 
 			if(field.type.toUpperCase() == this.db.getType("OBJECT")) {
 				const foreignObj = await new this.objects[field.object]({ db: this.db });
@@ -915,15 +919,19 @@ export class PathQLServerEntry {
 		let data = {};
 		const fields = {};
 		this.log(`Parse Request ${JSON.stringify(request)}`, 3);
+		if(request.data.token != null && request.data.token != "") {
+			this.token = request.data.token;
+			await this.load();
+		}
 		for(const key in request.data) {
 			this.checkPermission(key, request);
-			if(this.constructor.fields[key] != null) {
+			if(this.fields[key] != null) {
 				if(request.data[key] != "") {
 					this[key] = request.data[key];
 				}
 				fields[key] = request.data[key];
 				data[key] = this[key];
-			} else if(this.constructor.methods[key]) {
+			} else if(this.methods[key]) {
 				if(typeof(this[key]) == "function") {
 					data[key] = await this[key](request.data[key], request);
 				} else {
@@ -935,7 +943,7 @@ export class PathQLServerEntry {
 			}
 		}
 
-		if(request.data.token != null) {
+		if(request.data.token != null && request.data.token != "") {
 			const jsonData = await this.getFieldJSON(fields, request);
 			data = {
 				...data,
@@ -1082,7 +1090,7 @@ export class PathQLServerEntry {
 				if(key == "data") {
 					continue;
 				}
-				if(this.constructor.fields[key] != null && data[key].type != null && Where[data[key].type.toUpperCase()] != null && data[key].values != null) {
+				if(this.fields[key] != null && data[key].type != null && Where[data[key].type.toUpperCase()] != null && data[key].values != null) {
 					isWhere = true;
 					whereStatement = whereStatement + key + " " + Where[data[key].type.toUpperCase()] + " AND ";
 					for(const value of data[key].values) {
