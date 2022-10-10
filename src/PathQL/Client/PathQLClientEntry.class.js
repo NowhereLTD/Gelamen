@@ -42,7 +42,7 @@ export class PathQLClientEntry {
 	 * @returns 
 	 */
 	async parseEntity(data) {
-		const obj = await new this.constructor({client: this.client, name: this.name}, this.debug);
+		const obj = await new client.objects[this.name]({client: this.client, name: this.name}, this.debug);
 			for(const key of obj.constructor.fields) {
 				if(data[key]) {
 					obj[key] = data[key];
