@@ -911,20 +911,13 @@ export class PathQLServerEntry {
 					this.log(`The method ${key} is no function!`, 3);
 					data[key] = null;
 				}
-			} else if(key == "data") {
-				for(const name in request.data.data) {
-					const field = request.data.data[name];
-					if(field != "") {
-						this[name] = field;
-					}
-				}
 			} else {
 				this.log(`The key ${key} is no function and no key in object!`, 3)
 			}
 		}
 
-		if(request.data.data && request.data.data.token != null) {
-			const jsonData = await this.getFieldJSON(request.data.data, request);
+		if(request.data.data && request.data.token != null) {
+			const jsonData = await this.getFieldJSON(request.data, request);
 			data = {
 				...data,
 				...jsonData
@@ -940,7 +933,7 @@ export class PathQLServerEntry {
 	 * @returns 
 	 */
 	async getFieldJSON(fields, request = {}) {
-		const obj = await new this.constructor({ db: this.db, token: request.data.data.token });
+		const obj = await new this.constructor({ db: this.db, token: fields.token });
 		if(!await obj.load(request)) {
 			throw new PathQLNotExistsError({ msg: `object ${obj.constructor.name} with token ${obj.token} not found` });
 		}
