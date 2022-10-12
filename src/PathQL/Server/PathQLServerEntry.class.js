@@ -411,6 +411,9 @@ export class PathQLServerEntry {
 		this.log(`Validate ${value} is type ${type.database} in ${key}`, 2);
 		if(value == undefined) {
 			console.error(value + " : " + key + " is undefined!");
+			if(!this.force) {
+				throw new PathQLDatabaseError({ msg: value + " : " + key + " is undefined!" });
+			}
 			return false;
 		}
 		if(!type) {
@@ -420,6 +423,9 @@ export class PathQLServerEntry {
 			return true;
 		} else {
 			console.error("Validation failed!");
+			if(!this.force) {
+				throw new PathQLDatabaseError({ msg: "Validation failed!" });
+			}
 			return false;
 		}
 	}
