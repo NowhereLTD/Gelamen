@@ -93,6 +93,7 @@ export class PathQLServerRequestHandler {
 											this.objectCache[obj.token] = obj;
 										}
 									} catch (e) {
+										console.log("catch error")
 										console.log(e);
 										answer[objName] = {
 											error: e.toString()
