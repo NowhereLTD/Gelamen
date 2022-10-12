@@ -17,6 +17,7 @@ export class PathQLClientEntry {
 		this.debug = debug;
 		this.client = options.client ? options.client : {};
 		this.internal_name = options.name ? options.name : this.constructor.name;
+		this.fields = this.constructor.fields;
 		for(const method in this.constructor.methods) {
 			this[method] = async (data) => {
 				const request = {

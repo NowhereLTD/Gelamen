@@ -60,19 +60,30 @@ export class PathQLServerEntry {
 		this.log("Load fields, prefix and methods from constructor.");
 		this.fields = this.constructor.fields;
 		// Prove fields and optional add id and token field
+		
 		if(this.fields.id == null) {
-			this.fields.id = {
-				"type": "Int",
-				"db": {
-					"primary": true,
-					"autoincrement": true
-				}
+			this.fields = {
+				...{
+					id: {
+						"type": "Int",
+						"db": {
+							"primary": true,
+							"autoincrement": true
+						}
+					}
+				},
+				...this.fields
 			}
 		}
 
 		if(this.fields.token == null) {
-			this.fields.token = {
-				"type": "String"
+			this.fields = {
+				...{
+					token: {
+						"type": "String"
+					}
+				},
+				...this.fields
 			}
 		}
 
