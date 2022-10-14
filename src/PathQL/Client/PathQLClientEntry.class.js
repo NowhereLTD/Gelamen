@@ -28,7 +28,7 @@ export class PathQLClientEntry {
 				const response = await this.send(request);
 				const newResponse = {};
 				if(response[this.internal_name].error) {
-					newResponse.error = error;
+					newResponse.error = response[this.internal_name].error;
 				}else {
 					newResponse.obj = await this.parseEntity(response[this.internal_name]);
 					newResponse[method] = [];
