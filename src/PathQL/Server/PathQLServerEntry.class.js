@@ -1083,6 +1083,11 @@ export class PathQLServerEntry {
 		const key = data.key;
 		const value = data.value;
 		this.checkPermission(`${key}.update`, request);
+		const field = this.fields[key];
+		if(field == null) {
+			throw new PathQLFieldMissingError({msg: `The field for ${key} does not exists`});
+		}
+		this.validate(value, field.type, key);
 		if(!this.isKeyLocked(key, request)) {
 			try {
 				const statement = `UPDATE ${this.table} SET ${key} = ? WHERE token = ?;`
