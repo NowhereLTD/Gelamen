@@ -27,11 +27,15 @@ export class PathQLClientEntry {
 				request.pathql[this.internal_name][method] = data;
 				const response = await this.send(request);
 				const newResponse = {};
-				newResponse.obj = await this.parseEntity(response[this.internal_name]);
-				newResponse[method] = [];
-				if(response[this.internal_name][method]) {
-					for(const data of response[this.internal_name][method]) {
-						newResponse[method].push(await this.parseEntity(data));
+				if(response[this.internal_name].error) {
+					newResponse.error = error;
+				}else {
+					newResponse.obj = await this.parseEntity(response[this.internal_name]);
+					newResponse[method] = [];
+					if(response[this.internal_name][method]) {
+						for(const data of response[this.internal_name][method]) {
+							newResponse[method].push(await this.parseEntity(data));
+						}
 					}
 				}
 				return newResponse;
