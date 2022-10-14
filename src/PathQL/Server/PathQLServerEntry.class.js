@@ -184,7 +184,7 @@ export class PathQLServerEntry {
 				force: this.force,
 				history: this.storeHistory
 			});
-			object.parseFromRaw(json);
+			await object.parseFromRaw(json);
 			return object;
 		}
 	}
@@ -569,7 +569,7 @@ export class PathQLServerEntry {
 			} else {
 				throw new PathQLNotExistsError({ msg: `Cannot load object ${this.constructor.name} with token ${this.token}!` });
 			}
-			this.parseFromRaw(data);
+			await this.parseFromRaw(data);
 
 			// load all connected objects
 			for(const key in this.fields) {
@@ -933,41 +933,48 @@ export class PathQLServerEntry {
 	 * @returns 
 	 */
 	async parseRequest(request = {}) {
-		let data = {};
-		const fields = {};
-		this.log(`Parse Request ${JSON.stringify(request)}`, 3);
-		if(request.data.token != null && request.data.token != "") {
-			this.token = request.data.token;
-			await this.load();
-		}
-		for(const key in request.data) {
-			this.checkPermission(key, request);
-			if(this.fields[key] != null) {
-				if(request.data[key] != "") {
-					this[key] = request.data[key];
-				}
-				fields[key] = request.data[key];
-				data[key] = this[key];
-			} else if(this.methods[key]) {
-				if(typeof(this[key]) == "function") {
-					data[key] = await this[key](request.data[key], request);
+		try {
+			let data = {};
+			const fields = {};
+			this.log(`Parse Request ${JSON.stringify(request)}`, 3);
+			if(request.data.token != null && request.data.token != "") {
+				this.token = request.data.token;
+				await this.load();
+			}
+			for(const key in request.data) {
+				this.checkPermission(key, request);
+				if(this.fields[key] != null) {
+					if(request.data[key] != "") {
+						this[key] = request.data[key];
+					}
+					fields[key] = request.data[key];
+					data[key] = this[key];
+				} else if(this.methods[key]) {
+					if(typeof(this[key]) == "function") {
+						data[key] = await this[key](request.data[key], request);
+					} else {
+						this.log(`The method ${key} is no function!`, 3);
+						data[key] = null;
+					}
 				} else {
-					this.log(`The method ${key} is no function!`, 3);
-					data[key] = null;
+					this.log(`The key ${key} is no function and no key in object!`, 3)
 				}
-			} else {
-				this.log(`The key ${key} is no function and no key in object!`, 3)
 			}
-		}
 
-		if(request.data.token != null && request.data.token != "") {
-			const jsonData = await this.getFieldJSON(fields, request);
-			data = {
-				...data,
-				...jsonData
+			if(request.data.token != null && request.data.token != "") {
+				const jsonData = await this.getFieldJSON(fields, request);
+				data = {
+					...data,
+					...jsonData
+				}
+			}
+			return data;
+		}catch(e) {
+			this.log(`Parse Request failed with ${e}`);
+			if(!this.force) {
+				throw e;
 			}
 		}
-		return data;
 	}
 
 	/**
