@@ -1090,7 +1090,7 @@ export class PathQLServerEntry {
 
 		this.validate(value, this.db.getType(field.type), key);
 		if(!this.isKeyLocked(key, request)) {
-			try {y
+			try {
 				const statement = `UPDATE ${this.table} SET ${key} = ? WHERE token = ?;`
 				await this.runSQL(statement, [value, this.token]);
 			} catch(e) {
