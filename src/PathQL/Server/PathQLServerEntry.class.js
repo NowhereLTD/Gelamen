@@ -414,7 +414,7 @@ export class PathQLServerEntry {
 		if(value == undefined) {
 			console.error(value + " : " + key + " is undefined!");
 			if(!this.force) {
-				throw new PathQLDatabaseError({ msg: value + " : " + key + " is undefined!" });
+				throw new PathQLError({ msg: value + " : " + key + " is undefined!" });
 			}
 			return false;
 		}
@@ -426,7 +426,7 @@ export class PathQLServerEntry {
 		} else {
 			console.error("Validation failed!");
 			if(!this.force) {
-				throw new PathQLDatabaseError({ msg: "Validation failed!" });
+				throw new PathQLError({ msg: "Validation failed!" });
 			}
 			return false;
 		}
