@@ -1087,9 +1087,10 @@ export class PathQLServerEntry {
 		if(field == null) {
 			throw new PathQLFieldMissingError({msg: `The field for ${key} does not exists`});
 		}
-		this.validate(value, field.type, key);
+
+		this.validate(value, this.db.getType(field.type), key);
 		if(!this.isKeyLocked(key, request)) {
-			try {
+			try {y
 				const statement = `UPDATE ${this.table} SET ${key} = ? WHERE token = ?;`
 				await this.runSQL(statement, [value, this.token]);
 			} catch(e) {
