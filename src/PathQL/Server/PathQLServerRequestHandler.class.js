@@ -95,7 +95,7 @@ export class PathQLServerRequestHandler {
 									} catch (e) {
 										console.error(e);
 										answer[objName] = {
-											error: e.toString()
+											error: e.toJSON()
 										}
 									}
 								}else {

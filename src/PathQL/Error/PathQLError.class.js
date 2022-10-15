@@ -3,4 +3,11 @@ export class PathQLError extends Error {
 		super(json.msg);
 		this.msg = json.msg;
 	}
+
+	toJSON() {
+		return {
+			msg: this.msg,
+			type: this.constructor.name
+		}
+	}
 }
