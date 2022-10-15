@@ -369,7 +369,7 @@ export class PathQLServerEntry {
 		for(const key in this.fields) {
 			const field = this.fields[key];
 			if(field.type.toUpperCase() != this.db.getType("OBJECT")) {
-				if(key != "id" && this[key]) {
+				if(!field.fixed && this[key]) {
 					this.updateColumns = this.updateColumns + key + " = ?, ";
 					this.insertColumns = this.insertColumns + key + ", ";
 					this.insertValues = this.insertValues + "?, "
@@ -395,7 +395,7 @@ export class PathQLServerEntry {
 		for(const key in this.fields) {
 			if(raw[key]) {
 				const field = this.fields[key];
-				if(key != "id") {
+				if(!field.fixed) {
 					if(field.type.toUpperCase() != this.db.getType("OBJECT")) {
 						this.preparedSaveData.push(raw[key]);
 					}
@@ -1088,6 +1088,9 @@ export class PathQLServerEntry {
 		const field = this.fields[key];
 		if(field == null) {
 			throw new PathQLFieldMissingError({msg: `The field for ${key} does not exists`});
+		}
+		if(field.fixed) {
+			throw new PathQLError({msg: `The field for ${key} is static you can't update it!`});
 		}
 
 		this.validate(value, this.db.getType(field.type), key);
