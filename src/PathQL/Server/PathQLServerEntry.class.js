@@ -69,7 +69,8 @@ export class PathQLServerEntry {
 						"db": {
 							"primary": true,
 							"autoincrement": true
-						}
+						},
+						"fixed": true
 					}
 				},
 				...this.fields
@@ -80,7 +81,8 @@ export class PathQLServerEntry {
 			this.fields = {
 				...{
 					token: {
-						"type": "String"
+						"type": "String",
+						"fixed": true
 					}
 				},
 				...this.fields
