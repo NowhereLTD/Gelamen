@@ -15,6 +15,9 @@ import { PathQLDatabaseError } from "pathql/src/PathQL/Error/PathQLDatabaseError
 import { PathQLNotExistsError } from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
 import { PathQLNoPermissionError } from "pathql/src/PathQL/Error/PathQLNoPermissionError.class.js";
 import { PathQLFieldMissingError } from "pathql/src/PathQL/Error/PathQLFieldMissingError.class.js";
+import { PathQLValidationError } from "pathql/src/PathQL/Error/PathQLValidationError.class.js";
+import { PathQLError } from "pathql/src/PathQL/Error/PathQLError.class.js";
+
 
 import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
 import Search from "pathql/etc/data/search.json" assert {type: "json"};
@@ -414,7 +417,7 @@ export class PathQLServerEntry {
 		if(value == undefined) {
 			console.error(value + " : " + key + " is undefined!");
 			if(!this.force) {
-				throw new PathQLError({ msg: value + " : " + key + " is undefined!" });
+				throw new PathQLValidationError({ msg: value + " : " + key + " is undefined!" });
 			}
 			return false;
 		}
@@ -426,7 +429,7 @@ export class PathQLServerEntry {
 		} else {
 			console.error("Validation failed!");
 			if(!this.force) {
-				throw new PathQLError({ msg: "Validation failed!" });
+				throw new PathQLValidationError({ msg: "Validation failed!" });
 			}
 			return false;
 		}
