@@ -459,7 +459,8 @@ export class PathQLServerEntry {
 				this.generateDatabaseValues();
 				this.generateDatabaseKeys();
 				this.checkPermission("create", request);
-				statement = `INSERT INTO ${this.table} (${this.insertColumns}, token) VALUES (${this.insertValues}, ${this.token});`;
+				statement = `INSERT INTO ${this.table} (${this.insertColumns}, token) VALUES (${this.insertValues}, ?);`;
+				this.preparedSaveData.push(this.token);
 			}
 			const result = await this.runSQL(statement, this.preparedSaveData);
 			if(result) {
