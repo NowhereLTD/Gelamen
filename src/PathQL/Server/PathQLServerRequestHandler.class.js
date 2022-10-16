@@ -95,7 +95,7 @@ export class PathQLServerRequestHandler {
 											obj.addEventListener("run", function(e) {
 												const data = e.detail;
 												for(const client in this.clients) {
-													if(client.hasPermission(data.permission)) {
+													if(client.hasPermission(`${objName}.${data.permission}`)) {
 														data.time = Date.now();
 														this.clients[client].send(JSON.stringify(
 															data
