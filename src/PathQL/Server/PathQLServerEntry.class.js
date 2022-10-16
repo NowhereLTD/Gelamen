@@ -1072,6 +1072,7 @@ export class PathQLServerEntry {
 	 */
 	isKeyLocked(key, request) {
 		this.checkPermission(`${key}.lock.check`, request);
+		this.log(`The lock of ${key} is ${this.locks[key]}!`);
 		return this.locks[key];
 	}
 
