@@ -92,6 +92,17 @@ export class PathQLServerRequestHandler {
 										});
 										if(obj.token && obj.token != "") {
 											this.objectCache[obj.token] = obj;
+											obj.addEventListener("run", function(e) {
+												const data = e.detail;
+												for(const client in this.clients) {
+													if(client.hasPermission(data.permission)) {
+														data.time = Date.now();
+														this.clients[client].send(JSON.stringify(
+															data
+														));
+													}
+												}
+											}.bind(this));
 										}
 									} catch (e) {
 										console.error(e);

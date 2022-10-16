@@ -24,7 +24,7 @@ import Search from "pathql/etc/data/search.json" assert {type: "json"};
 import Where from "pathql/etc/data/where.json" assert {type: "json"};
 
 
-export class PathQLServerEntry {
+export class PathQLServerEntry extends EventTarget {
 	static fields = {};
 	static prefix = "pql";
 	static methods = {};
@@ -1109,6 +1109,8 @@ export class PathQLServerEntry {
 			try {
 				const statement = `UPDATE ${this.table} SET ${key} = ? WHERE token = ?;`
 				await this.runSQL(statement, [value, this.token]);
+				this.dispatchEvent(new CustomEvent("run", {detail: {key: key,value: value, cmd: "updateKey", permission: `${key}.update`}}));
+				return true;
 			} catch(e) {
 				this.log(`Update key ${key} failed with ${e}`);
 				if(!this.force) {
