@@ -43,7 +43,7 @@ export class PathQLServerRequestHandler {
 					if(socket.client) {
 						return socket.client.hasPermission(permission);
 					}
-					return false;
+					return true;
 				}
 
 				socket.permissions = ["*"];
