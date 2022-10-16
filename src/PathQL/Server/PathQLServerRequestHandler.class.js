@@ -47,6 +47,7 @@ export class PathQLServerRequestHandler {
 				}
 
 				socket.permissions = ["*"];
+				socket.edits = {};
 
 				socket.broadcast = function(msg) {
 					for(const client in this.clients) {
@@ -162,7 +163,10 @@ export class PathQLServerRequestHandler {
 					}
 				}.bind(this));
 
-				socket.addEventListener("close", function(e) {
+				socket.addEventListener("close", async function(e) {
+					for(const token in socket.edits) {
+						await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
+					}
 					delete(this.clients[e.target.id]);
 				}.bind(this));
 

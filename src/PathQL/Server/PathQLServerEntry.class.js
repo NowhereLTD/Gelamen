@@ -1032,6 +1032,9 @@ export class PathQLServerEntry {
 		this.checkPermission(`${key}.lock.close`, request);
 		if(this.fields[key] != null) {
 			if(!this.locks[key]) {
+				if(request.settings && request.settings.connection && request.settings.connection.edits) {
+					request.settings.connection[token] = key;
+				}
 				this.locks[key] = true;
 				return true;
 			} else {
@@ -1053,6 +1056,9 @@ export class PathQLServerEntry {
 		this.checkPermission(`${key}.lock.open`, request);
 		if(this.fields[key] != null) {
 			if(this.locks[key]) {
+				if(request.settings && request.settings.connection && request.settings.connection.edits) {
+					delete(request.settings.connection.edits[token]);
+				}
 				this.locks[key] = false;
 				return true;
 			} else {
