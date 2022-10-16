@@ -90,7 +90,7 @@ export class PathQLServerRequestHandler {
 												connection: socket
 											}
 										});
-										if(obj.token && obj.token != "") {
+										if(obj.token != null && obj.token != "") {
 											this.objectCache[obj.token] = obj;
 											console.log("add an object to the cache!");
 											this.objectCache[obj.token].addEventListener("run", function(e) {
@@ -108,8 +108,14 @@ export class PathQLServerRequestHandler {
 										}
 									} catch (e) {
 										console.error(e);
-										answer[objName] = {
-											error: e.toJSON()
+										if(typeof(e.toJSON) == "function") {
+											answer[objName] = {
+												error: e.toJSON()
+											}
+										}else {
+											answer[objName] = {
+												error: e
+											}
 										}
 									}
 								}else {

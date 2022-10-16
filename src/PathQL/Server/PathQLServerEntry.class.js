@@ -53,7 +53,7 @@ export class PathQLServerEntry extends EventTarget {
 				this.db = options.db;
 			} else {
 				this.log("Database is no instance of PathQLDatabaseController", 1);
-				throw "Database is no instance of PathQLDatabaseController";
+				throw PathQLDatabaseError({msg: "Database is no instance of PathQLDatabaseController"});
 			}
 		}
 		this.force = options.force ? options.force : false;
