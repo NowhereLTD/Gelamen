@@ -47,7 +47,6 @@ export class PathQLServerRequestHandler {
 				}
 
 				socket.permissions = ["*"];
-				socket.edits = {};
 
 				socket.broadcast = function(msg) {
 					for(const client in this.clients) {
@@ -61,6 +60,7 @@ export class PathQLServerRequestHandler {
 				socket.addEventListener("open", function(e) {
 					e.currentTarget.id = tcpConnection.rid;
 					this.clients[e.currentTarget.id] = socket;
+					socket.edits = {};
 				}.bind(this));
 
 				socket.addEventListener("message", async function(e) {
@@ -164,6 +164,7 @@ export class PathQLServerRequestHandler {
 				}.bind(this));
 
 				socket.addEventListener("close", async function(e) {
+					console.log(socket.edits);
 					for(const token in socket.edits) {
 						await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
 					}
