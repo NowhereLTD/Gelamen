@@ -92,12 +92,10 @@ export class PathQLServerRequestHandler {
 										});
 										if(obj.token != null && obj.token != "") {
 											this.objectCache[obj.token] = obj;
-											console.log("add an object to the cache!");
 											this.objectCache[obj.token].addEventListener("run", function(e) {
 												const data = e.detail;
-												console.log(data);
-												for(const client in this.clients) {
-													console.log(client)
+												for(const id in this.clients) {
+													const client = this.clients[id];
 													if(client.hasPermission(`${objName}.${data.permission}`)) {
 														data.time = Date.now();
 														this.clients[client].send(JSON.stringify(
