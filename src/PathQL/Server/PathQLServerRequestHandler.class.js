@@ -94,6 +94,7 @@ export class PathQLServerRequestHandler {
 											this.objectCache[obj.token] = obj;
 											obj.addEventListener("run", function(e) {
 												const data = e.detail;
+												console.log(data);
 												for(const client in this.clients) {
 													if(client.hasPermission(`${objName}.${data.permission}`)) {
 														data.time = Date.now();
