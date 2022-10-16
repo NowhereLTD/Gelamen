@@ -32,7 +32,7 @@ export class PathQLClientEntry {
 				}else {
 					newResponse.obj = await this.parseEntity(response[this.internal_name]);
 					newResponse[method] = [];
-					if(typeof(response[this.internal_name][method]) == "object") {
+					if(response[this.internal_name][method] != null && typeof(response[this.internal_name][method]) == "object") {
 						for(const data of response[this.internal_name][method]) {
 							newResponse[method].push(await this.parseEntity(data));
 						}
