@@ -92,7 +92,8 @@ export class PathQLServerRequestHandler {
 										});
 										if(obj.token && obj.token != "") {
 											this.objectCache[obj.token] = obj;
-											obj.addEventListener("run", function(e) {
+											console.log("add an object to the cache!");
+											this.objectCache[obj.token].addEventListener("run", function(e) {
 												const data = e.detail;
 												console.log(data);
 												for(const client in this.clients) {
