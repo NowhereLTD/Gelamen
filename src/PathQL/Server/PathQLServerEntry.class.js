@@ -1039,8 +1039,8 @@ export class PathQLServerEntry {
 			}
 		} else {
 			this.log(`Cannot find key ${key} to lock.`, 2);
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -1060,8 +1060,8 @@ export class PathQLServerEntry {
 			}
 		} else {
 			this.log(`Cannot find key ${key} to unlock.`, 2);
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -1070,7 +1070,7 @@ export class PathQLServerEntry {
 	 * @param {Request} request 
 	 * @returns 
 	 */
-	isKeyLocked(key, request) {
+	isKeyLocked(key, request = {}) {
 		this.checkPermission(`${key}.lock.check`, request);
 		this.log(`The lock of ${key} is ${this.locks[key]}!`);
 		return this.locks[key];
