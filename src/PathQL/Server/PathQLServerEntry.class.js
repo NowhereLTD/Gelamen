@@ -1033,7 +1033,7 @@ export class PathQLServerEntry {
 		if(this.fields[key] != null) {
 			if(!this.locks[key]) {
 				if(request.settings && request.settings.connection && request.settings.connection.edits) {
-					request.settings.connection[token] = key;
+					request.settings.connection[this.token] = key;
 				}
 				this.locks[key] = true;
 				return true;
@@ -1057,7 +1057,7 @@ export class PathQLServerEntry {
 		if(this.fields[key] != null) {
 			if(this.locks[key]) {
 				if(request.settings && request.settings.connection && request.settings.connection.edits) {
-					delete(request.settings.connection.edits[token]);
+					delete(request.settings.connection.edits[this.token]);
 				}
 				this.locks[key] = false;
 				return true;
