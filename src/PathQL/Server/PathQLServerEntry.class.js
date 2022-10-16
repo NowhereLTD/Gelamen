@@ -33,6 +33,7 @@ export class PathQLServerEntry extends EventTarget {
 	 * @param {JSON} options 
 	 */
 	constructor(options = {}) {
+		super();
 		if(this.tableName) {
 			this.table = this.tableName;
 		} else {
