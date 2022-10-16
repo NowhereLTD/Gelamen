@@ -1030,6 +1030,7 @@ export class PathQLServerEntry {
 	 */
 	async lockKey(key, request = {}) {
 		this.checkPermission(`${key}.lock.close`, request);
+		console.log(request);
 		if(this.fields[key] != null) {
 			if(!this.locks[key]) {
 				if(request.settings && request.settings.connection && request.settings.connection.edits) {

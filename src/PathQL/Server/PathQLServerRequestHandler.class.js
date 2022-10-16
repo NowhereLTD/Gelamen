@@ -164,7 +164,6 @@ export class PathQLServerRequestHandler {
 				}.bind(this));
 
 				socket.addEventListener("close", async function(e) {
-					console.log(socket.edits);
 					for(const token in socket.edits) {
 						await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
 					}
