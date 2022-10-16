@@ -97,6 +97,7 @@ export class PathQLServerRequestHandler {
 												const data = e.detail;
 												console.log(data);
 												for(const client in this.clients) {
+													console.log(client)
 													if(client.hasPermission(`${objName}.${data.permission}`)) {
 														data.time = Date.now();
 														this.clients[client].send(JSON.stringify(
