@@ -9,6 +9,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 		this.messageCounter = 0;
 		this.url = options.url ? options.url : "ws://localhost:9080";
 		this.objects = {};
+		this.objectCache = {};
 		this.init();
 	}
 
@@ -29,6 +30,14 @@ export class PathQLClientRequestHandler extends EventTarget {
 					this.lastPing = Date.now() - data.pong;
 					const pongEvent = new CustomEvent("pong", {detail: this.lastPing});
 					this.dispatchEvent(pongEvent);
+				}
+
+				if(data.event != null && data.event.token != null) {
+					const obj = this.objectCache[data.event.token];
+					if(obj != null) {
+						const objEvent = new CustomEvent(data.event.cmd, {detail: data.event});
+						obj.dispatchEvent(objEvent);
+					}
 				}
 
 				const messageEvent = new CustomEvent("message", {detail: data});

@@ -1,7 +1,7 @@
 /**
  * PathQLClientEntry represent a clone of the backend entry and allows the developer to simple create and handle requests
  */
-export class PathQLClientEntry {
+export class PathQLClientEntry extends EventTarget {
 	static fields = {};
 
 	// pathql
@@ -14,6 +14,7 @@ export class PathQLClientEntry {
 	 * @param {Boolean} debug 
 	 */
 	constructor(options = {}, debug = false) {
+		super();
 		this.debug = debug;
 		this.client = options.client ? options.client : {};
 		this.internal_name = options.name ? options.name : this.constructor.name;
@@ -43,6 +44,10 @@ export class PathQLClientEntry {
 				return newResponse;
 			}
 		}
+
+		this.addEventListener("updateKey", function(e) {
+			this[e.detail.key] = this[e.detail.value];
+		}.bind(this));
 	}
 
 	/**
@@ -51,13 +56,22 @@ export class PathQLClientEntry {
 	 * @returns 
 	 */
 	async parseEntity(data) {
-		const obj = await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
-			for(const key in this.constructor.fields) {
-				if(data[key]) {
-					obj[key] = data[key];
-				}
+		let obj = null;
+		if(data.token != null) {
+			if(this.objectCache[data.token] != null) {
+				obj = this.objectCache[data.token];
 			}
-			return obj;
+		}
+		if(obj == null) {
+			await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
+		}
+		
+		for(const key in this.constructor.fields) {
+			if(data[key]) {
+				obj[key] = data[key];
+			}
+		}	
+		return obj;
 	}
 
 	/**
