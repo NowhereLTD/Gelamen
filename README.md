@@ -33,13 +33,13 @@ export class Groups extends PathQLServerEntry {
     }
   }
 
-  // can be used for m to n connection
-  // static connections = [User];
+  static methods = {};
 
-  constructor(options = {}, db) {
-    super(options, db);
+  constructor(options = {}) {
+    options.logging = "INFO";
+    super(options);
     return (async function () {
-      await this.parseFromRaw();
+      await this.parseFromRaw(options);
       return this;
     }.bind(this)());
   }
@@ -51,18 +51,18 @@ export class Groups extends PathQLServerEntry {
 The server handles the client requests and gives you the possibility to provide your backend entrys to your frontend.
 
 ```javascript
+import {SqlitePathQLDatabaseController} from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
 import {PathQLServerRequestHandler} from "pathql/src/PathQL/Server/PathQLServerRequestHandler.class.js";
 import {Groups} from "src/Groups.class.js";
 
 export class YourServer extends PathQLServerRequestHandler {
-
-  static objects = {
-    "Groups": Groups
-    // add all other objects
-  }
-
   constructor(options) {
     super(options);
+    const db = new SqlitePathQLDatabaseController({name: "Test.sqlite", debug: false});
+    super({"db": db, name: "Test API"});
+    this.objects = {
+      "Groups": Groups
+    };
   }
 }
 ```
