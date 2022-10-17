@@ -58,12 +58,13 @@ export class PathQLClientEntry extends EventTarget {
 	async parseEntity(data) {
 		let obj = null;
 		if(data.token != null) {
-			if(this.objectCache[data.token] != null) {
-				obj = this.objectCache[data.token];
+			if(this.client.objectCache[data.token] != null) {
+				obj = this.client.objectCache[data.token];
+			}else {
+				this.client.objectCache[data.token] = await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
 			}
-		}
-		if(obj == null) {
-			await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
+		}else {
+			obj =  await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
 		}
 		
 		for(const key in this.constructor.fields) {
