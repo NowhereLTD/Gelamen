@@ -437,10 +437,16 @@ export class PathQLServerEntry extends EventTarget {
 	}
 
 	/**
-	 * Delete method for client
+	 * Store method for client
 	 */
 	async store(_data, request = {}) {
-		return await this.save(request);
+		const saveRequest = await this.save(request);
+		if(saveRequest) {
+			// permission check
+			return this.parseToRaw();
+		}else {
+			throw new PathQLError({ msg: `Error while store entity!` });
+		}
 	}
 	
 	/**
@@ -496,7 +502,7 @@ export class PathQLServerEntry extends EventTarget {
 		} catch(e) {
 			this.log(`Error while saving entity ${e}!`, 1);
 			if(!this.force) {
-				throw new PathQLDatabaseError({ msg: `Error while saving entity ${e}!` });
+				throw new PathQLError({ msg: `Error while saving entity ${e}!` });
 			}
 			return false;
 		}
