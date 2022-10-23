@@ -190,7 +190,7 @@ export class PathQLServerRequestHandler {
 						for(const token in socket.edits) {
 							try {
 								await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
-							}catch(e) {
+							}catch(_e) {
 								console.log(`Unlock the object cache of ${token} failed.`);
 							}
 						}

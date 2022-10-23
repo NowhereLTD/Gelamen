@@ -555,7 +555,7 @@ export class PathQLServerEntry extends EventTarget {
 	 * @returns 
 	 */
 	async load(request = {}) {
-		this.checkPermission("load", request = {});
+		this.checkPermission("load", request);
 		try {
 			if(this.token == null) {
 				this.log(`Cannot load object ${this.constructor.name} if it does not contain an token!`);
@@ -1035,7 +1035,7 @@ export class PathQLServerEntry extends EventTarget {
 	 * @param {JSON} request 
 	 * @returns 
 	 */
-	async lockKey(key, request = {}) {
+	lockKey(key, request = {}) {
 		this.checkPermission(`${key}.lock.close`, request);
 		if(this.fields[key] != null) {
 			if(!this.locks[key]) {
@@ -1059,7 +1059,7 @@ export class PathQLServerEntry extends EventTarget {
 	 * @param {Request} request 
 	 * @returns 
 	 */
-	async unlockKey(key, request = {}) {
+	unlockKey(key, request = {}) {
 		this.checkPermission(`${key}.lock.open`, request);
 		if(this.fields[key] != null) {
 			if(this.locks[key]) {
