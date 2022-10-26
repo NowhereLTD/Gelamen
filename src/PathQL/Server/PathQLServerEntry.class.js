@@ -373,7 +373,7 @@ export class PathQLServerEntry extends EventTarget {
 		for(const key in this.fields) {
 			const field = this.fields[key];
 			if(field.type.toUpperCase() != this.db.getType("OBJECT")) {
-				if(!field.fixed && this[key]) {
+				if(!field.fixed && this[key] != null) {
 					this.updateColumns = this.updateColumns + key + " = ?, ";
 					this.insertColumns = this.insertColumns + key + ", ";
 					this.insertValues = this.insertValues + "?, "
@@ -466,7 +466,9 @@ export class PathQLServerEntry extends EventTarget {
 				this.generateDatabaseValues();
 				this.generateDatabaseKeys();
 				this.checkPermission("create", request);
-				statement = `INSERT INTO ${this.table} (${this.insertColumns}, token) VALUES (${this.insertValues}, ?);`;
+				this.insertColumns = this.insertColumns != "" ? this.insertColumns + ", token" : "token";
+				this.insertValues = this.insertValues != "" ? this.insertValues + ", ?" : "?";
+				statement = `INSERT INTO ${this.table} (${this.insertColumns}) VALUES (${this.insertValues});`;
 				this.preparedSaveData.push(this.token);
 			}
 			const result = await this.runSQL(statement, this.preparedSaveData);
