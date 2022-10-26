@@ -9,6 +9,7 @@ export class User extends PathQLServerEntry {
 	}
 
 	constructor(options = {}) {
+		options.logging = "DEBUG";
 		super(options);
 		this.objects = {
 			"Groups": Groups

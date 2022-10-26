@@ -4,8 +4,8 @@ import { User } from "pathql/tests/Entrys/User.pathql.js";
 import {assertEquals} from "https://deno.land/std@0.159.0/testing/asserts.ts";
 
 Deno.test("basis test", async (_t) => {
+	const db = new SqlitePathQLDatabaseController({"name": "test.db"});
 	try {
-		const db = new SqlitePathQLDatabaseController({"name": "test.db"});
 		const user = await new User({
 			"db": db
 		});
