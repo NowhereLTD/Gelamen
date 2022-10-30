@@ -458,7 +458,7 @@ export class PathQLServerEntry extends EventTarget {
 			this.generateDatabaseValues();
 			this.generateDatabaseKeys();
 			let statement = "";
-			if(this.token != null) {
+			if(this.token != null && this.token != "") {
 				this.checkPermission("update", request);
 				statement = `UPDATE ${this.table} SET ${this.updateColumns} WHERE token = ?;`;
 			} else {
