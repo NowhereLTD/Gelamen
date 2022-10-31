@@ -443,7 +443,7 @@ export class PathQLServerEntry extends EventTarget {
 		const saveRequest = await this.save(request);
 		if(saveRequest) {
 			// permission check
-			return this.parseToRaw();
+			return [this.parseToRaw()];
 		}else {
 			throw new PathQLError({ msg: `Error while store entity!` });
 		}

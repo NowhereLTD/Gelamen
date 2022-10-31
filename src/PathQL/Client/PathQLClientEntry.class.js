@@ -20,7 +20,7 @@ export class PathQLClientEntry extends EventTarget {
 		this.internal_name = options.name ? options.name : this.constructor.name;
 		this.fields = this.constructor.fields;
 		for(const method in this.constructor.methods) {
-			this[method] = async (data) => {
+			this[method] = async (data = {}) => {
 				const request = {
 					pathql: {}
 				}
