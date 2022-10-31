@@ -1,4 +1,5 @@
 {
+  "OFF": -1,
 	"INFO": 0,
   "ERROR": 1,
   "WARNING": 2,
