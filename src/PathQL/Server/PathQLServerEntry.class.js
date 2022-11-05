@@ -469,8 +469,8 @@ export class PathQLServerEntry extends EventTarget {
 				this.insertColumns = this.insertColumns != "" ? this.insertColumns + ", token" : "token";
 				this.insertValues = this.insertValues != "" ? this.insertValues + ", ?" : "?";
 				statement = `INSERT INTO ${this.table} (${this.insertColumns}) VALUES (${this.insertValues});`;
-				this.preparedSaveData.push(this.token);
 			}
+			this.preparedSaveData.push(this.token);
 			const result = await this.runSQL(statement, this.preparedSaveData);
 			if(result) {
 				if(this.token == null) {
