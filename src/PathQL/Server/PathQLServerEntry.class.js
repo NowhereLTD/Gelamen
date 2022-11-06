@@ -461,6 +461,7 @@ export class PathQLServerEntry extends EventTarget {
 			if(this.token != null && this.token != "") {
 				this.checkPermission("update", request);
 				statement = `UPDATE ${this.table} SET ${this.updateColumns} WHERE token = ?;`;
+				this.preparedSaveData.push(this.token);
 			} else {
 				this.token = crypto.randomUUID();
 				this.generateDatabaseValues();
@@ -469,8 +470,8 @@ export class PathQLServerEntry extends EventTarget {
 				this.insertColumns = this.insertColumns != "" ? this.insertColumns + ", token" : "token";
 				this.insertValues = this.insertValues != "" ? this.insertValues + ", ?" : "?";
 				statement = `INSERT INTO ${this.table} (${this.insertColumns}) VALUES (${this.insertValues});`;
+				this.preparedSaveData.push(this.token);
 			}
-			this.preparedSaveData.push(this.token);
 			const result = await this.runSQL(statement, this.preparedSaveData);
 			if(result) {
 				if(this.token == null) {
