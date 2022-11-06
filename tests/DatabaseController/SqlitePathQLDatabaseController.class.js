@@ -15,7 +15,7 @@ export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
 				console.log(data);
 			}
 			const result = this.connection.query(statement, data);
-			const cursor = this.connection._wasm.last_insert_rowid();
+			const cursor = this.connection.lastInsertRowId();
 			return {
 				"result": result,
 				"cursor": cursor
