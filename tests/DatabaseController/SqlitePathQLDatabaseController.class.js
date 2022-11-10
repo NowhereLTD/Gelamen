@@ -1,6 +1,10 @@
 import {DB} from "https://deno.land/x/sqlite/mod.ts";
 import {PathQLDatabaseController} from "pathql/src/PathQL/Server/PathQLDatabaseController.class.js";
 
+/**
+ * This is an example implementation for an PathQLDatabaseController based on an sqkite Database Implementation
+ * Please Note: The "group" entry is not possible because of a naming conflict with the sqlite database.
+ */
 export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
 	constructor(options) {
 		super(options);

@@ -10,14 +10,12 @@
  * Futuremore handles the PathQLServerEntry requests, permissions and history
  *
  */
-
 import { PathQLDatabaseError } from "pathql/src/PathQL/Error/PathQLDatabaseError.class.js";
 import { PathQLNotExistsError } from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
 import { PathQLNoPermissionError } from "pathql/src/PathQL/Error/PathQLNoPermissionError.class.js";
 import { PathQLFieldMissingError } from "pathql/src/PathQL/Error/PathQLFieldMissingError.class.js";
 import { PathQLValidationError } from "pathql/src/PathQL/Error/PathQLValidationError.class.js";
 import { PathQLError } from "pathql/src/PathQL/Error/PathQLError.class.js";
-
 
 import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
 import Search from "pathql/etc/data/search.json" assert {type: "json"};
@@ -408,7 +406,6 @@ export class PathQLServerEntry extends EventTarget {
 		}
 	}
 
-
 	/**
 	 * Validate a specific value by predefined regex types.
 	 * TODO: check if value is null
@@ -578,6 +575,7 @@ export class PathQLServerEntry extends EventTarget {
 				let i = 0;
 				for(const key of this.selectColumnsArray) {
 					if(result.result[0][i]) {
+						//if(this.fields[key].db != null && this.fields[key].db["FOREIGN"] && this.fields[key].object)
 						data[key] = result.result[0][i];
 					}
 					i++;

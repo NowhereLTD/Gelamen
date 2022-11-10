@@ -16,17 +16,21 @@ export class PathQLClientEntry extends EventTarget {
 	constructor(options = {}, debug = false) {
 		super();
 		this.debug = debug;
+		this.logHistory = [];
 		this.client = options.client ? options.client : {};
 		this.internal_name = options.name ? options.name : this.constructor.name;
 		this.fields = this.constructor.fields;
 		for(const method in this.constructor.methods) {
 			this[method] = async (data = {}) => {
+				this.log(`{${this.internal_name}} run method ${method}`);
 				const request = {
 					pathql: {}
 				}
 				request.pathql[this.internal_name] = this.getFieldNames();
 				request.pathql[this.internal_name][method] = data;
+				this.log(`send request: ${JSON.stringify(request)}`);
 				const response = await this.send(request);
+				console.log(`get server answer: ${JSON.stringify(response)}`);
 				const newResponse = {};
 				if(response[this.internal_name].error) {
 					newResponse.error = response[this.internal_name].error;
@@ -92,5 +96,19 @@ export class PathQLClientEntry extends EventTarget {
 	 */
 	async send(json) {
 		return await this.client.send(json);
+	}
+
+	/**
+	 * This method would be log an message if the level argument is lesser than the debug level of the object
+	 * @param {string} msg 
+	 * @param {number} level 
+	 */
+	log(msg = "", level = 3) {
+		if(this.debug < level) {
+			msg = "[PATHQL] " + msg;
+			console.log(msg);
+			this.logHistory.push(msg);
+		}
+		// push all messages in general to history would be use to much memory over the time for one object
 	}
 }
