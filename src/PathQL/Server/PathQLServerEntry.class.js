@@ -502,7 +502,7 @@ export class PathQLServerEntry extends EventTarget {
 		} catch(e) {
 			this.log(`Error while saving entity ${e}!`, 1);
 			if(!this.force) {
-				throw new PathQLError({ msg: `Error while saving entity ${e}!` });
+				throw e;
 			}
 			return false;
 		}

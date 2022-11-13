@@ -38,6 +38,7 @@ export class PathQLClientEntry extends EventTarget {
 					newResponse.obj = await this.parseEntity(response[this.internal_name]);
 					newResponse[method] = [];
 					if(response[this.internal_name][method] != null && typeof(response[this.internal_name][method]) == "object") {
+						// Fix this implement a method to parse nested object structures
 						for(const data of response[this.internal_name][method]) {
 							newResponse[method].push(await this.parseEntity(data));
 						}
