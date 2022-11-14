@@ -1,4 +1,5 @@
 import Types from "pathql/etc/data/types.json" assert {type: "json"};
+import { PathQLError } from "pathql/src/PathQL/Error/PathQLError.class.js";
 
 export class PathQLDatabaseController {
 	static AUTOINCREMENT = "AUTOINCREMENT";
