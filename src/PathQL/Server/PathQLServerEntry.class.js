@@ -319,7 +319,7 @@ export class PathQLServerEntry extends EventTarget {
 			} catch(e) {
 				this.log(`The field <${key}> parsing throws an error: ${e}`, 1);
 				if(!this.force) {
-					throw e;
+					throw new PathQLError(`Parsing failed with ${e}`);
 				}
 			}
 		}
@@ -791,6 +791,9 @@ export class PathQLServerEntry extends EventTarget {
 	getForeignTableName(object) {
 		const name1 = this.constructor.name;
 		const name2 = object.constructor.name;
+		if(name1 === name2) {
+			name2 = name2 + "Foreign";
+		}
 		let name = this.prefix + "_" + name1 + name2;
 		if(name1 < name2) {
 			name = object.prefix + "_" + name2 + name1;
