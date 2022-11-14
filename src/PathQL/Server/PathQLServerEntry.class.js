@@ -628,7 +628,7 @@ export class PathQLServerEntry extends EventTarget {
 				}
 			} else if(field && data[key].type && Where[data[key].type.toUpperCase()] && data[key].values) {
 				const foreignObj = await new this.objects[field.object]({ db: this.db });
-				whereStatement = whereStatement + "token IN (SELECT " + this.constructor.name + " FROM " + this.getForeignTableName(foreignObj) + "_" + key + " WHERE " + field.object + " " + Where[data[key].type.toUpperCase()] + ") AND ";
+				whereStatement = whereStatement + `token IN (SELECT ${this.constructor.name} FROM ${this.getForeignTableName(foreignObj)}_${key} WHERE ${field.object}Foreign ${Where[data[key].type.toUpperCase()]}) AND `;
 				for(const value of data[key].values) {
 					this.validate(value, this.db.getType("STRING"), key);
 					whereData.push(value);
@@ -751,7 +751,7 @@ export class PathQLServerEntry extends EventTarget {
 			if(field.type.toUpperCase() == this.db.getType("OBJECT")) {
 				const foreignObj = await new this.objects[field.object]({ db: this.db });
 				const table = this.getForeignTableName(foreignObj) + "_" + key;
-				const statement = `CREATE TABLE IF NOT EXISTS ${table} (${this.constructor.name} ${this.db.getType("STRING").database}, ${foreignObj.constructor.name} ${this.db.getType("STRING").database});`;
+				const statement = `CREATE TABLE IF NOT EXISTS ${table} (${this.constructor.name} ${this.db.getType("STRING").database}, ${foreignObj.constructor.name}Foreign ${this.db.getType("STRING").database});`;
 				const result = await this.runSQL(statement);
 				if(result == null) {
 					this.log(`Cannot create foreign table!`, 1);
@@ -790,10 +790,7 @@ export class PathQLServerEntry extends EventTarget {
 	 */
 	getForeignTableName(object) {
 		const name1 = this.constructor.name;
-		let name2 = object.constructor.name;
-		if(name1 === name2) {
-			name2 = name2 + "Foreign";
-		}
+		const name2 = object.constructor.name;
 		let name = this.prefix + "_" + name1 + name2;
 		if(name1 < name2) {
 			name = object.prefix + "_" + name2 + name1;
@@ -825,7 +822,7 @@ export class PathQLServerEntry extends EventTarget {
 					this[key][token] = await new this.objects[field.object]({ db: this.db, token: token });
 				}
 				const table = this.getForeignTableName(this[key][token]) + "_" + key;
-				const statement = `INSERT INTO ${table} (${this.constructor.name}, ${this[key][token].constructor.name}) VALUES (?, ?);`;
+				const statement = `INSERT INTO ${table} (${this.constructor.name}, ${this[key][token].constructor.name}Foreign) VALUES (?, ?);`;
 				const result = await this.runSQL(statement, [this.token, token]);
 				if(result != null) {
 					return true;
@@ -866,7 +863,7 @@ export class PathQLServerEntry extends EventTarget {
 					this[key][token] = await new this.objects[field.object]({ db: this.db, token: token });
 				}
 				const table = this.getForeignTableName(this[key][token]) + "_" + key;
-				const statement = `DELETE FROM ${table} WHERE ${this.constructor.name}=? AND ${this[key][token].constructor.name}=?;`;
+				const statement = `DELETE FROM ${table} WHERE ${this.constructor.name}=? AND ${this[key][token].constructor.name}Foreign=?;`;
 				const result = await this.runSQL(statement, [this.token, token]);
 				delete (this[key][token]);
 				if(result != null) {
@@ -903,9 +900,14 @@ export class PathQLServerEntry extends EventTarget {
 				this[key][token] = await new this.objects[field.object]({ db: this.db, token: token });
 			}
 			const table = this.getForeignTableName(this[key][token]) + "_" + key;
-			const statement = `DELETE FROM ${table} WHERE ${this[key][token].constructor.name}=?;`;
-			const result = await this.runSQL(statement, [token]);
-			return result;
+			const statement1 = `DELETE FROM ${table} WHERE ${this[key][token].constructor.name}=?;`;
+			const result1 = await this.runSQL(statement1, [token]);
+			const statement2 = `DELETE FROM ${table} WHERE ${this[key][token].constructor.name}Foreign=?;`;
+			const result2 = await this.runSQL(statement2, [token]);
+			return {
+				result1,
+				result2
+			};
 		} catch(e) {
 			this.log(`Remove all entrys failed with error ${e}`);
 			if(!this.force) {
@@ -926,7 +928,7 @@ export class PathQLServerEntry extends EventTarget {
 			const field = this.fields[key];
 			const foreignObj = await new this.objects[field.object]({ "db": this.db });
 			const table = this.getForeignTableName(foreignObj) + "_" + key;
-			const statement = `SELECT ${foreignObj.constructor.name} FROM ${table} WHERE ${this.constructor.name}=?;`;
+			const statement = `SELECT ${foreignObj.constructor.name}Foreign FROM ${table} WHERE ${this.constructor.name}=?;`;
 			const result = await this.runSQL(statement, [this.token]);
 			if(result != null && result.result != null && result.result[0] != null) {
 				for(const token of result.result[0]) {
