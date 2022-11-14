@@ -790,7 +790,7 @@ export class PathQLServerEntry extends EventTarget {
 	 */
 	getForeignTableName(object) {
 		const name1 = this.constructor.name;
-		const name2 = object.constructor.name;
+		let name2 = object.constructor.name;
 		if(name1 === name2) {
 			name2 = name2 + "Foreign";
 		}
