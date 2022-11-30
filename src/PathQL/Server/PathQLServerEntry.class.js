@@ -101,6 +101,7 @@ export class PathQLServerEntry extends EventTarget {
 		this.methods = {
 			"search": {},
 			"store": {},
+			"get": {},
 			"drop": {},
 			"count": {},
 			"lockKey": {},
@@ -445,6 +446,17 @@ export class PathQLServerEntry extends EventTarget {
 			throw new PathQLError({ msg: `Error while store entity!` });
 		}
 	}
+
+	/**
+	 * A simple method to get an object
+	 * @param {JSON} _data 
+	 * @param {JSON} request 
+	 * @returns 
+	 */
+	async get(_data, request = {}) {
+		await this.load(request);
+		return this.toJSON();
+	}
 	
 	/**
 	 * This method try to create or save the entry in to the database
@@ -658,7 +670,7 @@ export class PathQLServerEntry extends EventTarget {
 						request: request
 					});
 
-					await object.load();
+					await object.load(request);
 					objects.push(object);
 				}
 			} catch(e) {
