@@ -107,7 +107,9 @@ export class PathQLServerEntry extends EventTarget {
 			"lockKey": {},
 			"unlockKey": {},
 			"updateKey": {},
-			"isKeyLocked": {}
+			"isKeyLocked": {},
+			"add": {},
+			"remove": {}
 		};
 		this.methods = {
 			...this.methods,
