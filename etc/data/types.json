@@ -12,7 +12,7 @@
 		"database": "FLOAT"
 	},
 	"BOOLEAN": {
-		"regex": "(^true$|^false$)",
+		"regex": "(^true$|^false$|^1$|^0$)",
 		"database": "BOOLEAN"
 	},
 	"EMAIL": {
