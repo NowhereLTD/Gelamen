@@ -78,7 +78,8 @@ export class PathQLServerRequestHandler {
 											answer[objName] = await this.objectCache[msg.pathql[objName].token].parseRequest({
 												data: msg.pathql[objName],
 												settings: {
-													connection: socket
+													connection: socket,
+													api: this
 												}
 											});
 											continue;
@@ -88,7 +89,8 @@ export class PathQLServerRequestHandler {
 									answer[objName] = await obj.parseRequest({
 										data: msg.pathql[objName],
 										settings: {
-											connection: socket
+											connection: socket,
+											api: this
 										}
 									});
 									if(obj.token != null && obj.token != "") {
