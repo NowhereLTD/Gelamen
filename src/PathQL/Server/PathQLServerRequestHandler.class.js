@@ -1,4 +1,5 @@
 import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
+import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
 
 export class PathQLServerRequestHandler {
 
@@ -8,6 +9,7 @@ export class PathQLServerRequestHandler {
 		this.name = options.name ? options.name : "PathQLServerRequestHandler";
 		this.version = options.version ? options.version : "0.1";
 		this.db = options.db ? options.db : null;
+		this.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
 		this.clients = {};
 		this.debug = true;
 		this.run = false;
@@ -34,175 +36,173 @@ export class PathQLServerRequestHandler {
 
 	async handleConnection(tcpConnection) {
 		const httpConnection = Deno.serveHttp(tcpConnection);
-		while(this.run) {
-			const connection = await httpConnection.nextRequest();
-			if(connection) {
-				const {socket, response} = Deno.upgradeWebSocket(connection.request);
+		const connection = await httpConnection.nextRequest();
+		if(connection) {
+			const {socket, response} = Deno.upgradeWebSocket(connection.request);
 
-				socket.hasPermission = function(permission) {
-					if(socket.client) {
-						return socket.client.hasPermission(permission);
-					}
-					return true;
+			socket.hasPermission = function(permission) {
+				if(socket.client) {
+					return socket.client.hasPermission(permission);
 				}
+				return true;
+			}
 
-				socket.permissions = ["*"];
+			socket.permissions = ["*"];
 
-				socket.broadcast = function(msg) {
-					for(const client in this.clients) {
-						msg.time = Date.now();
-						this.clients[client].send(JSON.stringify(
-							msg
-						));
-					}
-				}.bind(this)
+			socket.broadcast = function(msg) {
+				for(const client in this.clients) {
+					msg.time = Date.now();
+					this.clients[client].send(JSON.stringify(
+						msg
+					));
+				}
+			}.bind(this)
 
-				socket.addEventListener("open", function(e) {
-					e.currentTarget.id = tcpConnection.rid;
-					this.clients[e.currentTarget.id] = socket;
-					socket.edits = {};
-				}.bind(this));
+			socket.addEventListener("open", function(e) {
+				e.currentTarget.id = tcpConnection.rid;
+				this.clients[e.currentTarget.id] = socket;
+				socket.edits = {};
+			}.bind(this));
 
-				socket.addEventListener("message", async function(e) {
-					try {
-						const msg = JSON.parse(e.data);
-						if(msg.pathql != null) {
-							const answer = {};
-							for(const objName in msg.pathql) {
-								if(this.objects[objName] != null) {
-									try {
-										msg.pathql[objName].data = msg.pathql[objName].data ? msg.pathql[objName].data : {};
-										if(msg.pathql[objName].token != null && msg.pathql[objName].token != "") {
-											if(this.objectCache[msg.pathql[objName].token] != null) {
-												answer[objName] = await this.objectCache[msg.pathql[objName].token].parseRequest({
-													data: msg.pathql[objName],
-													settings: {
-														connection: socket
-													}
-												});
-												continue;
-											}
-										}
-										const obj = await new this.objects[objName]({db: this.db});
-										answer[objName] = await obj.parseRequest({
-											data: msg.pathql[objName],
-											settings: {
-												connection: socket
-											}
-										});
-										if(obj.token != null && obj.token != "") {
-											this.objectCache[obj.token] = obj;
-											this.objectCache[obj.token].addEventListener("run", function(e) {
-												const data = e.detail;
-												for(const id in this.clients) {
-													const client = this.clients[id];
-													if(client.hasPermission(`${objName}.${data.permission}`)) {
-														data.obj = objName;
-														data.token = obj.token;
-														const response = {
-															event: data,
-															time: Date.now()
-														}
-														client.send(JSON.stringify(
-															response
-														));
-													}
+			socket.addEventListener("message", async function(e) {
+				try {
+					const msg = JSON.parse(e.data);
+					if(msg.pathql != null) {
+						const answer = {};
+						for(const objName in msg.pathql) {
+							if(this.objects[objName] != null) {
+								try {
+									msg.pathql[objName].data = msg.pathql[objName].data ? msg.pathql[objName].data : {};
+									if(msg.pathql[objName].token != null && msg.pathql[objName].token != "") {
+										if(this.objectCache[msg.pathql[objName].token] != null) {
+											answer[objName] = await this.objectCache[msg.pathql[objName].token].parseRequest({
+												data: msg.pathql[objName],
+												settings: {
+													connection: socket
 												}
-											}.bind(this));
-										}
-									} catch (e) {
-										console.error(e);
-										if(typeof(e.toJSON) == "function") {
-											answer[objName] = {
-												error: e.toJSON()
-											}
-										}else {
-											answer[objName] = {
-												error: e
-											}
+											});
+											continue;
 										}
 									}
-								}else {
-									answer[objName] = {
-										error: {
-											msg: "Object type not exists!"
+									const obj = await new this.objects[objName]({db: this.db});
+									answer[objName] = await obj.parseRequest({
+										data: msg.pathql[objName],
+										settings: {
+											connection: socket
+										}
+									});
+									if(obj.token != null && obj.token != "") {
+										this.objectCache[obj.token] = obj;
+										this.objectCache[obj.token].addEventListener("run", function(e) {
+											const data = e.detail;
+											for(const id in this.clients) {
+												const client = this.clients[id];
+												if(client.hasPermission(`${objName}.${data.permission}`)) {
+													data.obj = objName;
+													data.token = obj.token;
+													const response = {
+														event: data,
+														time: Date.now()
+													}
+													client.send(JSON.stringify(
+														response
+													));
+												}
+											}
+										}.bind(this));
+									}
+								} catch (e) {
+									console.error(e);
+									if(typeof(e.toJSON) == "function") {
+										answer[objName] = {
+											error: e.toJSON()
+										}
+									}else {
+										answer[objName] = {
+											error: e
 										}
 									}
 								}
-							}
-
-							if(msg.messageCounter != undefined) {
-								answer["messageCounter"] = msg.messageCounter;
-							}
-
-							answer.time = Date.now();
-							socket.send(JSON.stringify(answer));
-						}else if(msg.ping) {
-							socket.send(JSON.stringify({
-								pong: Date.now()
-							}));
-						}else if(msg.getObject) {
-							const answer = {};
-							const object = await this.getObject(msg.getObject);
-							if(object) {
-								answer[msg.getObject] = object;
 							}else {
-								answer[msg.getObject] = {
+								answer[objName] = {
+									error: {
+										msg: "Object type not exists!"
+									}
+								}
+							}
+						}
+
+						if(msg.messageCounter != undefined) {
+							answer["messageCounter"] = msg.messageCounter;
+						}
+
+						answer.time = Date.now();
+						socket.send(JSON.stringify(answer));
+					}else if(msg.ping) {
+						socket.send(JSON.stringify({
+							pong: Date.now()
+						}));
+					}else if(msg.getObject) {
+						const answer = {};
+						const object = await this.getObject(msg.getObject);
+						if(object) {
+							answer[msg.getObject] = object;
+						}else {
+							answer[msg.getObject] = {
+								error: {
+									msg: "Object not exists!"
+								}
+							}
+						}
+						if(msg.messageCounter != undefined) {
+							answer["messageCounter"] = msg.messageCounter;
+						}
+						answer.time = Date.now();
+						socket.send(JSON.stringify(answer));
+					}else if(msg.getAllObjects) {
+						const answer = {};
+						answer.objects = {};
+						for(const objectName in this.objects) {
+							const object = await this.getObject(objectName);
+							if(object) {
+								answer.objects[objectName] = object;
+							}else {
+								answer.objects[objectName] = {
 									error: {
 										msg: "Object not exists!"
 									}
 								}
 							}
-							if(msg.messageCounter != undefined) {
-								answer["messageCounter"] = msg.messageCounter;
-							}
-							answer.time = Date.now();
-							socket.send(JSON.stringify(answer));
-						}else if(msg.getAllObjects) {
-							const answer = {};
-							answer.objects = {};
-							for(const objectName in this.objects) {
-								const object = await this.getObject(objectName);
-								if(object) {
-									answer.objects[objectName] = object;
-								}else {
-									answer.objects[objectName] = {
-										error: {
-											msg: "Object not exists!"
-										}
-									}
-								}
-							}
-							if(msg.messageCounter != undefined) {
-								answer["messageCounter"] = msg.messageCounter;
-							}
-
-							answer.time = Date.now();
-							socket.send(JSON.stringify(answer));
 						}
-					} catch (err) {
-						console.log(err);
-						this.addClientError(e.target, err);
+						if(msg.messageCounter != undefined) {
+							answer["messageCounter"] = msg.messageCounter;
+						}
+
+						answer.time = Date.now();
+						socket.send(JSON.stringify(answer));
 					}
-				}.bind(this));
+				} catch (err) {
+					console.log(err);
+					this.addClientError(e.target, err);
+				}
+			}.bind(this));
 
-				socket.addEventListener("close", async function(e) {
-						for(const token in socket.edits) {
-							try {
-								await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
-							}catch(_e) {
-								console.log(`Unlock the object cache of ${token} failed.`);
-							}
+			socket.addEventListener("close", async function(e) {
+					for(const token in socket.edits) {
+						try {
+							await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
+						}catch(_e) {
+							console.log(`Unlock the object cache of ${token} failed.`);
 						}
-						delete(this.clients[e.target.id]);
-				}.bind(this));
+					}
+					delete(this.clients[e.target.id]);
+			}.bind(this));
 
-				socket.addEventListener("error", function(e) {
-					this.addClientError(socket, e);
-				}.bind(this));
+			socket.addEventListener("error", function(e) {
+				this.addClientError(socket, e);
+			}.bind(this));
 
-				connection.respondWith(response);
-			}
+			connection.respondWith(response);
 		}
 	}
 
@@ -257,4 +257,16 @@ export class PathQLServerRequestHandler {
     }
     socket.error = socket.error += e.message;
   }
+
+	/**
+	 * Log a message based on the level
+	 * 
+	 * @param {String} msg 
+	 * @param {Logging} level 
+	 */
+	 log(msg, level = 3) {
+		if(level <= this.logging) {
+			console.log("[PATHQL] " + msg);
+		}
+	}
 }
