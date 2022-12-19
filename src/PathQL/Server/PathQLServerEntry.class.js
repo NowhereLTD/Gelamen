@@ -129,8 +129,6 @@ export class PathQLServerEntry extends EventTarget {
 	 * @param {Logging} level 
 	 */
 	log(msg, level = 3) {
-		console.log(this.logging)
-		console.log(msg)
 		if(level <= this.logging) {
 			console.log("[PATHQL] " + msg);
 		}
