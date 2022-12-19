@@ -221,8 +221,8 @@ export class PathQLServerEntry extends EventTarget {
 		if(this.token != null) {
 			newPermission = newPermission + `.${this.token}`;
 		}
-		if(request != null && request.checkPermission != null) {
-			const hasPerm = request.checkPermission(newPermission);
+		if(request != null && request.connection && request.connection.checkPermission != null) {
+			const hasPerm = request.connection.checkPermission(newPermission);
 			if(hasPerm) {
 				return true;
 			} else {

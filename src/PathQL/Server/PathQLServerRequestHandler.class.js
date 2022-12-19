@@ -40,9 +40,9 @@ export class PathQLServerRequestHandler {
 		if(connection) {
 			const {socket, response} = Deno.upgradeWebSocket(connection.request);
 
-			socket.hasPermission = function(permission) {
+			socket.checkPermission = function(permission) {
 				if(socket.client) {
-					return socket.client.hasPermission(permission);
+					return socket.client.checkPermission(permission);
 				}
 				return true;
 			}
@@ -78,8 +78,7 @@ export class PathQLServerRequestHandler {
 											answer[objName] = await this.objectCache[msg.pathql[objName].token].parseRequest({
 												data: msg.pathql[objName],
 												settings: {
-													connection: socket,
-													api: this
+													connection: socket
 												}
 											});
 											continue;
@@ -89,8 +88,7 @@ export class PathQLServerRequestHandler {
 									answer[objName] = await obj.parseRequest({
 										data: msg.pathql[objName],
 										settings: {
-											connection: socket,
-											api: this
+											connection: socket
 										}
 									});
 									if(obj.token != null && obj.token != "") {
