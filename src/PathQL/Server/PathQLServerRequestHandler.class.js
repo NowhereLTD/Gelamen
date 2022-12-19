@@ -40,9 +40,9 @@ export class PathQLServerRequestHandler {
 		if(connection) {
 			const {socket, response} = Deno.upgradeWebSocket(connection.request);
 
-			socket.checkPermission = function(permission) {
+			socket.hasPermission = function(permission) {
 				if(socket.client) {
-					return socket.client.checkPermission(permission);
+					return socket.client.hasPermission(permission);
 				}
 				return true;
 			}
