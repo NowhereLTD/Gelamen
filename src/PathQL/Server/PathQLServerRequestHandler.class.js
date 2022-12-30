@@ -67,7 +67,8 @@ export class PathQLServerRequestHandler {
 			socket.addEventListener("message", async function(e) {
 				try {
 					const msg = JSON.parse(e.data);
-					if(msg.pathql != null) {
+					const checkMsg = await this.prehandleMessage(msg, socket);
+					if(checkMsg && msg.pathql != null) {
 						const answer = {};
 						for(const objName in msg.pathql) {
 							if(this.objects[objName] != null) {
@@ -244,6 +245,11 @@ export class PathQLServerRequestHandler {
 		}else {
 			return null;
 		}
+	}
+
+	async prehandleMessage(msg, socket) {
+		// Todo implement permission and user tocken handling for this specific request
+		return true;
 	}
 
 	/**
