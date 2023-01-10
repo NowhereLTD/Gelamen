@@ -130,7 +130,7 @@ export class PathQLServerEntry extends EventTarget {
 	 */
 	log(msg, level = 3) {
 		if(level <= this.logging) {
-			console.log("[PATHQL] " + msg);
+			console.log("[PATHQL] ", msg);
 		}
 	}
 
@@ -599,7 +599,7 @@ export class PathQLServerEntry extends EventTarget {
 			// load all connected objects
 			for(const key in this.fields) {
 				if(this.fields[key].type.toUpperCase() == this.db.getType("OBJECT")) {
-					await this.loadAll(key);
+					await this.loadAll(key, request);
 				}
 			}
 			return true;
@@ -941,6 +941,7 @@ export class PathQLServerEntry extends EventTarget {
 			const table = this.getForeignTableName(foreignObj) + "_" + key;
 			const statement = `SELECT ${foreignObj.constructor.name}Foreign FROM ${table} WHERE ${this.constructor.name}=?;`;
 			const result = await this.runSQL(statement, [this.token]);
+			this.log(result);
 			if(result != null && result.result != null && result.result[0] != null) {
 				for(const token of result.result[0]) {
 					this[key][token] = await new this.objects[field.object]({ "db": this.db, "token": token });

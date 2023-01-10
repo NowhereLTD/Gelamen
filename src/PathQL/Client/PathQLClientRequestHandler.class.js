@@ -10,6 +10,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 		this.url = options.url ? options.url : "ws://localhost:9080";
 		this.objects = {};
 		this.objectCache = {};
+		this.baseClass = options.baseClass ? options.baseClass : PathQLClientEntry;
 		this.init();
 	}
 
@@ -107,7 +108,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 			for(const objectName in objects.objects) {
 				const object = objects.objects[objectName];
 				if(!object.error) {
-					this.objects[objectName] = class extends PathQLClientEntry {
+					this.objects[objectName] = class extends this.baseClass {
 						static fields = object.fields;
 						static methods = object.methods;
 						static objects = object.objects;
