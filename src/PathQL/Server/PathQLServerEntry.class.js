@@ -943,7 +943,9 @@ export class PathQLServerEntry extends EventTarget {
 			const result = await this.runSQL(statement, [this.token]);
 			this.log(result);
 			if(result != null && result.result != null && result.result[0] != null) {
+				this[key] = {};
 				for(const token of result.result[0]) {
+					this.log("Load" + token);
 					this[key][token] = await new this.objects[field.object]({ "db": this.db, "token": token });
 					await this[key][token].load();
 				}
