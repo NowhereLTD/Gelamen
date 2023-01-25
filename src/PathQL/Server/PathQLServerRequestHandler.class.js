@@ -189,7 +189,10 @@ export class PathQLServerRequestHandler {
 						// TODO: Fix this stuff above also a permission request?
 						const answer = {};
 						answer[objName] = {
-							error: "Error: Failed to run request"
+							error: {
+								msg: "Failed to run request!",
+								type: "PathQLNoLoginError"
+							}
 						}
 						if(msg.messageCounter != undefined) {
 							answer["messageCounter"] = msg.messageCounter;
