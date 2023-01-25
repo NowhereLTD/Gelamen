@@ -11,6 +11,9 @@ export class PathQLClientRequestHandler extends EventTarget {
 		this.objects = {};
 		this.objectCache = {};
 		this.baseClass = options.baseClass ? options.baseClass : PathQLClientEntry;
+		// This holds a user specific class list with custom class to implement custom pathqlcliententry objects with own functions
+		// f.e. a user class with a specific crypt method
+		this.baseClassList = options.baseClassList ? options.baseClassList : {};
 		this.init();
 	}
 
@@ -108,7 +111,11 @@ export class PathQLClientRequestHandler extends EventTarget {
 			for(const objectName in objects.objects) {
 				const object = objects.objects[objectName];
 				if(!object.error) {
-					this.objects[objectName] = class extends this.baseClass {
+					let CacheBaseClass = this.baseClass;
+					if(this.baseClassList[objectName]) {
+						CacheBaseClass = this.baseClassList[objectName];
+					}
+					this.objects[objectName] = class extends CacheBaseClass {
 						static fields = object.fields;
 						static methods = object.methods;
 						static objects = object.objects;

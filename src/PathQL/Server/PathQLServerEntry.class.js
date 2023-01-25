@@ -497,13 +497,11 @@ export class PathQLServerEntry extends EventTarget {
 				}
 				return true;
 			} else {
-				if(result == null) {
-					if(!request.tableIsCreated) {
-						await this.createTable();
-						request.tableIsCreated = true;
-						this.token = null;
-						return await this.save(request);
-					}
+				if(result == null && !request.tableIsCreated) {
+					await this.createTable();
+					request.tableIsCreated = true;
+					this.token = null;
+					return await this.save(request);
 				}
 				this.log(`Cannot save the entry into database!`, 1);
 				if(!this.force) {

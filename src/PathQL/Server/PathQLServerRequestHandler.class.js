@@ -67,6 +67,10 @@ export class PathQLServerRequestHandler {
 			socket.addEventListener("message", async function(e) {
 				try {
 					const msg = JSON.parse(e.data);
+					if(!msg.csrf || msg.csrf !== this.csrfList[msg.messageCounter]) {
+						// return new csrf error message
+						return false;
+					}
 					const checkMsg = await this.prehandleMessage(msg, socket);
 					if(checkMsg && msg.pathql != null) {
 						const answer = {};
@@ -181,6 +185,19 @@ export class PathQLServerRequestHandler {
 
 						answer.time = Date.now();
 						socket.send(JSON.stringify(answer));
+					}else {
+						// TODO: Fix this stuff above also a permission request?
+						const answer = {};
+						answer[objName] = {
+							error: "Error: Failed to run request"
+						}
+						if(msg.messageCounter != undefined) {
+							answer["messageCounter"] = msg.messageCounter;
+						}
+
+						answer.time = Date.now();
+						socket.send(JSON.stringify(answer));
+						
 					}
 				} catch (err) {
 					console.log(err);
