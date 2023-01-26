@@ -229,7 +229,7 @@ export class PathQLServerEntry extends EventTarget {
 				});
 			}
 		} else {
-			return true;
+			return false;
 		}
 	}
 
