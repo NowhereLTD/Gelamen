@@ -699,8 +699,11 @@ export class PathQLServerEntry extends EventTarget {
 
 					await object.load(request);
 					objects.push(object);
+				}else {
+					this.log(`Cannot load user from ${token}`)
 				}
 			} catch(e) {
+				this.log(e);
 				if(!(e instanceof PathQLNoPermissionError)) {
 					throw e;
 				}
