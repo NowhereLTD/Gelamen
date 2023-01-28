@@ -692,6 +692,7 @@ export class PathQLServerEntry extends EventTarget {
 						logging: this.logging,
 						force: this.force,
 						history: this.storeHistory,
+						doCheckPermissions: this.doCheckPermissions,
 						token: token[0],
 						request: request
 					});
