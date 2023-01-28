@@ -44,6 +44,7 @@ export class PathQLServerEntry extends EventTarget {
 
 		this.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
 		this.isClient = options.isClient ? options.isClient : false;
+		this.doCheckPermissions = options.doCheckPermissions ? options.doCheckPermissions : true;
 
 		this.log("Prove the options variables!");
 		if(!this.isClient) {
@@ -218,6 +219,9 @@ export class PathQLServerEntry extends EventTarget {
 	 * @returns 
 	 */
 	checkPermission(permission, request = {}) {
+		if(!this.doCheckPermissions) {
+			return true;
+		}
 		if(request && request.settings && request.settings.connection && request.settings.connection.hasPermission) {
 			const newPermission = `${this.constructor.name}.${permission}`;
 			const hasPerm = request.settings.connection.hasPermission(newPermission, this);
