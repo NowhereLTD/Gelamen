@@ -230,6 +230,7 @@ export class PathQLServerEntry extends EventTarget {
 				});
 			}
 		}
+		this.log(`Check Permission ${permission} failed!`, 5);
 		return false;
 	}
 
@@ -989,8 +990,8 @@ export class PathQLServerEntry extends EventTarget {
 				await this.load();
 			}
 			for(const key in request.data) {
-				this.checkPermission(key, request);
 				if(this.fields[key] != null) {
+					this.checkPermission(key, request);
 					if(request.data[key] != "") {
 						this[key] = request.data[key];
 					}
