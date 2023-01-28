@@ -101,6 +101,7 @@ export class PathQLServerEntry extends EventTarget {
 		this.methods = {
 			"search": {},
 			"store": {},
+			"create": {},
 			"get": {},
 			"drop": {},
 			"count": {},
@@ -228,9 +229,8 @@ export class PathQLServerEntry extends EventTarget {
 					permission: newPermission
 				});
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -518,9 +518,24 @@ export class PathQLServerEntry extends EventTarget {
 	}
 
 	/**
+	 * Create method for client
+	 */
+	async create(_data, request = {}) {
+		this.checkPermission("create", request);
+		this.token = crypto.randomUUID();
+		const statement = `INSERT INTO ${this.table} (token) VALUES (?);`;
+		const result = await this.runSQL(statement, [this.token]);
+		if(result) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	/**
 	 * Delete method for client
 	 */
-	 async drop(_data, request = {}) {
+	async drop(_data, request = {}) {
 		return await this.delete(request);
 	}
 
