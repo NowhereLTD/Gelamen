@@ -67,10 +67,10 @@ export class PathQLServerRequestHandler {
 			socket.addEventListener("message", async function(e) {
 				try {
 					const msg = JSON.parse(e.data);
-					if(!msg.csrf || msg.csrf !== this.csrfList[msg.messageCounter]) {
+					//if(!msg.csrf || msg.csrf !== this.csrfList[msg.messageCounter]) {
 						// return new csrf error message
-						return false;
-					}
+						//return false;
+					//}
 					const checkMsg = await this.prehandleMessage(msg, socket);
 					if(checkMsg && msg.pathql != null) {
 						const answer = {};
@@ -267,7 +267,7 @@ export class PathQLServerRequestHandler {
 		}
 	}
 
-	async prehandleMessage(msg, socket) {
+	prehandleMessage(_msg, _socket) {
 		// Todo implement permission and user tocken handling for this specific request
 		return true;
 	}

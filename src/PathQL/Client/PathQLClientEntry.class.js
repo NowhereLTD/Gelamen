@@ -13,7 +13,7 @@
 	 * @param {JSON} options 
 	 * @param {Boolean} debug 
 	 */
-	constructor(options = {}, debug = false) {
+	constructor(options = {}) {
 		super();
 		this.debug = 0;
 		this.logHistory = [];
