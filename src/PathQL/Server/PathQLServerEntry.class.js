@@ -1008,6 +1008,10 @@ export class PathQLServerEntry extends EventTarget {
 			}
 			for(const key in request.data) {
 				if(this.fields[key] != null) {
+					if(request.data[key] != "") {
+						this[key] = request.data[key];
+					}
+					fields[key] = request.data[key];
 					data[key] = this[key];
 				} else if(this.methods[key]) {
 					if(typeof(this[key]) == "function") {
