@@ -131,8 +131,12 @@ export class PathQLServerEntry extends EventTarget {
 	 * @param {Logging} level 
 	 */
 	log(msg, level = 3) {
-		if(level <= this.logging) {
-			console.log("[PATHQL] ", msg);
+		try {
+			if(level <= this.logging) {
+				console.log("[PATHQL] ", msg);
+			}
+		}catch(e) {
+			return false;
 		}
 	}
 
@@ -160,7 +164,11 @@ export class PathQLServerEntry extends EventTarget {
 		this.log(`<SQL DATA> ${JSON.stringify(data)}`);
 		const cacheData = await this.db.runPrepared(statement, data);
 		this.isLocked = false;
-		this.log(`<SQL RETURN> ${JSON.stringify(cacheData)}`);
+		if(cacheData) {
+			this.log(`<SQL RETURN> ${JSON.stringify(cacheData)}`);
+		}else {
+			this.log(`<SQL RETURN> Error`);
+		}
 		return cacheData;
 	}
 
