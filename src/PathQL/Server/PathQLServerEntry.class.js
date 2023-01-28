@@ -44,7 +44,7 @@ export class PathQLServerEntry extends EventTarget {
 
 		this.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
 		this.isClient = options.isClient ? options.isClient : false;
-		this.doCheckPermissions = options.doCheckPermissions ? options.doCheckPermissions : true;
+		this.doCheckPermissions = options.doCheckPermissions != null ? options.doCheckPermissions : true;
 
 		this.log("Prove the options variables!");
 		if(!this.isClient) {
