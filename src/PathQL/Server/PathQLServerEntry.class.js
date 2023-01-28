@@ -160,6 +160,7 @@ export class PathQLServerEntry extends EventTarget {
 		this.log(`<SQL DATA> ${JSON.stringify(data)}`);
 		const cacheData = await this.db.runPrepared(statement, data);
 		this.isLocked = false;
+		this.log(`<SQL RETURN> ${JSON.stringify(cacheData)}`);
 		return cacheData;
 	}
 
