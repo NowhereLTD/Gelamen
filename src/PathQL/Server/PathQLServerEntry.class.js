@@ -244,7 +244,10 @@ export class PathQLServerEntry extends EventTarget {
 			}
 		}
 		this.log(`Check Permission ${permission} failed!`, 5);
-		return false;
+		throw new PathQLNoPermissionError({
+			msg: "The user has no permission to do this.",
+			permission: newPermission
+		});
 	}
 
 	/**
