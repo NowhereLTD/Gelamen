@@ -135,7 +135,7 @@ export class PathQLServerEntry extends EventTarget {
 			if(level <= this.logging) {
 				console.log("[PATHQL] ", msg);
 			}
-		}catch(e) {
+		}catch(_e) {
 			return false;
 		}
 	}
@@ -246,7 +246,7 @@ export class PathQLServerEntry extends EventTarget {
 		this.log(`Check Permission ${permission} failed!`, 5);
 		throw new PathQLNoPermissionError({
 			msg: "The user has no permission to do this.",
-			permission: newPermission
+			permission: permission
 		});
 	}
 
