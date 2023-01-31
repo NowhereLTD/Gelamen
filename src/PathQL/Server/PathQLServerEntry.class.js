@@ -192,7 +192,8 @@ export class PathQLServerEntry extends EventTarget {
 				logging: this.logging,
 				force: this.force,
 				history: this.storeHistory,
-				token: this.token
+				token: this.token,
+				doCheckPermissions: this.doCheckPermissions
 			});
 			return object;
 		} else {
@@ -200,7 +201,8 @@ export class PathQLServerEntry extends EventTarget {
 				db: this.db,
 				logging: this.logging,
 				force: this.force,
-				history: this.storeHistory
+				history: this.storeHistory,
+				doCheckPermissions: this.doCheckPermissions
 			});
 			await object.parseFromRaw(json);
 			return object;
@@ -1051,7 +1053,7 @@ export class PathQLServerEntry extends EventTarget {
 	 * @returns 
 	 */
 	async getFieldJSON(fields, request = {}) {
-		const obj = await new this.constructor({ db: this.db, token: fields.token });
+		const obj = await new this.constructor({ db: this.db, token: fields.token, doCheckPermissions: this.doCheckPermissions });
 		if(!await obj.load(request)) {
 			throw new PathQLNotExistsError({ msg: `object ${obj.constructor.name} with token ${obj.token} not found` });
 		}
