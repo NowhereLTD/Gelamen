@@ -11,7 +11,8 @@ Deno.test("request test", async (_t) => {
 		console.log("[OK] create a new object");
 		const user = await new User({
 			"name": "Test",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await user.save();
 
@@ -19,7 +20,8 @@ Deno.test("request test", async (_t) => {
 			"name": "Test",
 			"email": "test@example.com",
 			"tagline": "My project",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await example.save();
 		await example.add({key: "contributors", token: user});

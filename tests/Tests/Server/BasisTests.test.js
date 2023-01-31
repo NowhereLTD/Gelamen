@@ -7,12 +7,14 @@ Deno.test("basis test", async (_t) => {
 	const db = new SqlitePathQLDatabaseController({"name": "test.db"});
 	try {
 		const user = await new User({
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await user.save();
 	
 		const example = await new Example({
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		assertEquals(await example.save(), true);
 	
@@ -23,7 +25,8 @@ Deno.test("basis test", async (_t) => {
 	
 		const loadExample = await new Example({
 			"db": db,
-			"token": example.token
+			"token": example.token,
+			"doCheckPermissions": false
 		});
 		const loadResult = await loadExample.load();
 		assertEquals(loadResult, true);

@@ -5,7 +5,8 @@ Deno.test("store test", async (_t) => {
 	const db = new SqlitePathQLDatabaseController({"name": "test.db"});
 	try {
 		const user = await new User({
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		const _storeRequest = await user.store({});
 

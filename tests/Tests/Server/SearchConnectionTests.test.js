@@ -11,14 +11,16 @@ Deno.test("search connection test", async (_t) => {
 		console.log("[OK] create group object");
 		const group = await new Groups({
 			"name": "Test Group",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await group.save();
 
 		console.log("[OK] create user object");
 		const user = await new User({
 			"name": "Test",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await user.save();
 
@@ -28,7 +30,7 @@ Deno.test("search connection test", async (_t) => {
 		// TODO: test to get all groups connections
 		// await group.cObj["users"].getConnections(user, group);
 
-		const requestExample = await new User({"db": db});
+		const requestExample = await new User({"db": db, "doCheckPermissions": false});
 
 		console.log("[OK] search by connection");
 		const data = await requestExample.parseRequest({

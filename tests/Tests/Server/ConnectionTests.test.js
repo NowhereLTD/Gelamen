@@ -11,14 +11,16 @@ Deno.test("basis test", async (_t) => {
 		console.log("[OK] create group object");
 		const group = await new Groups({
 			"name": "Testgroup",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await group.save();
 
 		console.log("[OK] create user object");
 		const user = await new User({
 			"name": "Test1",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await user.save();
 

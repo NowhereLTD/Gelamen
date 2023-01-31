@@ -11,19 +11,21 @@ Deno.test("basis test", async (_t) => {
     console.log("[OK] create group object");
     const group = await new Groups({
       "name": "Test Group",
-      "db": db
+      "db": db,
+			"doCheckPermissions": false
     });
     assertEquals(await group.save(), true);
 
     console.log("[OK] create user object");
     const user = await new User({
       "name": "Test",
-      "db": db
+      "db": db,
+			"doCheckPermissions": false
     });
     assertEquals(await user.save(), true);
 
     console.log("[OK] send connect user and group request");
-    const requestExample = await new Groups({"db": db});
+    const requestExample = await new Groups({"db": db, "doCheckPermissions": false});
 
     const data = await requestExample.parseRequest({
       data: {

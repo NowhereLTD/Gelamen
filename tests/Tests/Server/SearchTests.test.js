@@ -10,7 +10,8 @@ Deno.test("basis test", async (_t) => {
 		console.log("[OK] start search test");
 		const user = await new User({
 			"name": "Test",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await user.save();
 
@@ -18,12 +19,13 @@ Deno.test("basis test", async (_t) => {
 			"name": "Test",
 			"email": "test@example.com",
 			"tagline": "My project",
-			"db": db
+			"db": db,
+			"doCheckPermissions": false
 		});
 		await example.save();
 		await example.add({key: "admin", token: user});
 
-		const requestExample = await new Example({"db": db});
+		const requestExample = await new Example({"db": db, "doCheckPermissions": false});
 
 		console.log("[OK] search by parameters");
 		const data = await requestExample.parseRequest({

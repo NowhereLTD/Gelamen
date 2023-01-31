@@ -10,7 +10,8 @@ Deno.test("speed test", async (_t) => {
     for(let i=0; i<100; i++) {
       const user = await new User({
         "name": "Test",
-        "db": db
+        "db": db,
+        "doCheckPermissions": false
       });
       await user.save();
       users.push(user);
