@@ -983,7 +983,7 @@ export class PathQLServerEntry extends EventTarget {
 				for(const tokenArray in result.result) {
 					const token = result.result[tokenArray][0];
 					this.log("Load " + token);
-					this[key][token] = await new this.objects[field.object]({ "db": this.db, "token": token });
+					this[key][token] = await new this.objects[field.object]({ "db": this.db, "token": token, doCheckPermissions: this.doCheckPermissions });
 					await this[key][token].load();	
 				}
 			}
