@@ -40,7 +40,7 @@ export class PathQLServerEntry extends EventTarget {
 
 		this.token = options.token != null ? options.token : null;
 		this.locks = {};
-		this.checkPermission("load", options.request);
+		this.checkPermission("init", options.request);
 
 		this.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
 		this.isClient = options.isClient ? options.isClient : false;
