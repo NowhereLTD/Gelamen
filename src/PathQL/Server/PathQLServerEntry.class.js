@@ -984,7 +984,7 @@ export class PathQLServerEntry extends EventTarget {
 					const token = result.result[tokenArray][0];
 					this.log("Load " + token);
 					this[key][token] = await new this.objects[field.object]({ "db": this.db, "token": token, doCheckPermissions: this.doCheckPermissions });
-					await this[key][token].load();	
+					await this[key][token].load(request);	
 				}
 			}
 			return true;
