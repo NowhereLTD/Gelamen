@@ -1009,7 +1009,7 @@ export class PathQLServerEntry extends EventTarget {
 			this.log(`Parse Request ${JSON.stringify(request)}`, 3);
 			if(request.data.token != null && request.data.token != "") {
 				this.token = request.data.token;
-				await this.load();
+				await this.load(request);
 			}
 			for(const key in request.data) {
 				if(this.fields[key] != null) {
