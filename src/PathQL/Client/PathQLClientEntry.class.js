@@ -39,7 +39,10 @@
 				if(response[this.internal_name].error) {
 					newResponse.error = response[this.internal_name].error;
 				}else if(response[this.internal_name][method][0]) {
-					await this.parseEntity(response[this.internal_name][method][0], this);
+					const cacheEl = await this.parseEntity(response[this.internal_name][method][0], this);
+					const cacheSelfEl = await this.parseEntity(response[this.internal_name][method], this);
+					newResponse.self = cacheSelfEl;
+					newResponse.cache = cacheEl;
 					newResponse[method] = [];
 					if(response[this.internal_name][method] != null && typeof(response[this.internal_name][method]) == "object") {
 						// Fix this implement a method to parse nested object structures

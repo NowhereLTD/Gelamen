@@ -1,8 +1,15 @@
 import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
 import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
 
+/**
+ * TODO: Implement an direct message connection between 2 users, etablish first an encrypted connection based on public keys of both and then send
+ * messages between both.
+ * IMPORTENT: No DDOS, DOS et. al. Filter message parsing, make somethink like an connection request on both sides before establish an connection with
+ * full avaible message sending
+ * 
+ * Same problem with the existing broaffdcast method
+ */
 export class PathQLServerRequestHandler {
-
 	constructor(options = {}) {
 		this.port = options.port ? options.port : 9080;
 		this.host = options.host ? options.host : "localhost";
@@ -52,8 +59,6 @@ export class PathQLServerRequestHandler {
 				}
 				return false;
 			}
-
-			socket.permissions = ["*"];
 
 			socket.broadcast = function(msg) {
 				for(const client in this.clients) {
