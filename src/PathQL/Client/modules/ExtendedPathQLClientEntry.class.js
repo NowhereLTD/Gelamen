@@ -16,7 +16,7 @@ export class ExtendedPathQLClientEntry extends PathQLClientEntry {
 	 * The pin is an alternative only client side param
 	 * @param {*} user
 	 */
-	async generateUserKeys(user) {
+	generateUserKeys(user) {
 		const keys = this.generateKeys(user);
 		const privKeyEncrypt = this.encrypt(keys.privateKey, user.pin);
 		const revokeCertEncrypt = this.encrypt(keys.revocationCertificate, user.pin);
@@ -55,7 +55,7 @@ export class ExtendedPathQLClientEntry extends PathQLClientEntry {
 	 * @returns 
 	 */
 	static async decrypt(text, password) {
-		const encoder = new TextEncoder();
+		const _encoder = new TextEncoder();
 		const decoder = new TextDecoder();
 		const encrypted = decoder.decode(text);
 		const encryptedMessage = await openpgp.readMessage({
