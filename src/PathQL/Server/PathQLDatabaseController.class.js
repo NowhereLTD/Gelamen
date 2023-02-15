@@ -1,5 +1,5 @@
 import Types from "pathql/etc/data/types.json" assert {type: "json"};
-import { PathQLError } from "pathql/src/PathQL/Error/PathQLError.class.js";
+import {PathQLError} from "pathql/src/PathQL/Error/PathQLError.class.js";
 
 export class PathQLDatabaseController {
 	static AUTOINCREMENT = "AUTOINCREMENT";
@@ -28,7 +28,7 @@ export class PathQLDatabaseController {
 		type = type.toUpperCase();
 		if(this.types[type] != null) {
 			return this.types[type];
-		}else {
+		} else {
 			throw new PathQLError({msg: `Cannot found the specific type <${type}> in the database handler!`});
 		}
 	}

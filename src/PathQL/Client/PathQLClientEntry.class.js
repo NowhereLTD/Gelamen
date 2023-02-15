@@ -1,7 +1,7 @@
 /**
  * PathQLClientEntry represent a clone of the backend entry and allows the developer to simple create and handle requests
  */
- export class PathQLClientEntry extends EventTarget {
+export class PathQLClientEntry extends EventTarget {
 	static fields = {};
 
 	// pathql
@@ -15,7 +15,7 @@
 	 */
 	constructor(options = {}) {
 		super();
-		this.debug = 0;
+		this.debug = options.debug ? options.debug : 0;
 		this.logHistory = [];
 		this.client = options.client ? options.client : {};
 		this.internal_name = options.name ? options.name : this.constructor.name;
@@ -38,25 +38,25 @@
 				const newResponse = {};
 				if(response[this.internal_name].error) {
 					newResponse.error = response[this.internal_name].error;
-				}else if(response[this.internal_name][method][0]) {
-					const cacheEl = await this.parseEntity(response[this.internal_name][method][0], this);
-					const cacheSelfEl = await this.parseEntity(response[this.internal_name][method], this);
-					newResponse.self = cacheSelfEl;
-					newResponse.cache = cacheEl;
+				} else if(response[this.internal_name][method][0]) {
+					await this.parseEntity(response[this.internal_name][method][0], this);
 					newResponse[method] = [];
 					if(response[this.internal_name][method] != null && typeof(response[this.internal_name][method]) == "object") {
 						// Fix this implement a method to parse nested object structures
-						for(const data of response[this.internal_name][method]) {
-							newResponse[method].push(await this.parseEntity(data, this));
+						for(const cacheData of response[this.internal_name][method]) {
+							newResponse[method].push(await this.parseEntity(cacheData));
 						}
-					}else {
+					} else {
+						this.log("set single entity");
 						newResponse[method] = response[this.internal_name][method];
 					}
-				}else if(typeof(response[this.internal_name][method]) == "object") {
+				} else if(typeof(response[this.internal_name][method]) == "object") {
 					await this.parseEntity(response[this.internal_name][method], this);
-				}else {
+				} else {
+					newResponse[method] = response[this.internal_name][method];
 					newResponse.error = "No entry found!";
 				}
+				this.log(newResponse[method])
 				this.data[method] = newResponse[method];
 				this.error = newResponse.error;
 				return this;
@@ -74,16 +74,18 @@
 	 * @returns 
 	 */
 	async parseEntity(data, obj) {
+		this.log("Parse new entity");
+		this.log(data);
 		if(!obj) {
 			obj = await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
 		}
-		if(data.token != null) {
+		/*if(data.token != null) {
 			if(this.client.objectCache[data.token] != null) {
 				obj = this.client.objectCache[data.token];
 			}else {
 				this.client.objectCache[data.token] = obj;
 			}
-		}
+		}*/
 
 		for(const key in this.constructor.fields) {
 			const field = this.constructor.fields[key];
@@ -95,16 +97,17 @@
 						for(const token of data[key]) {
 							obj[key].push(await cacheObj.parseEntity({token: token}));
 						}
-					}else {
+					} else {
 						obj[key] = await cacheObj.parseEntity({token: data[key][0]});
 					}
-				}else if(field.type == "Boolean") {
+				} else if(field.type == "Boolean") {
 					obj[key] = JSON.parse(data[key]);
-				}else {
+				} else {
 					obj[key] = data[key];
 				}
 			}
-		}	
+		}
+		this.log(obj)
 		return obj;
 	}
 
@@ -124,16 +127,16 @@
 	 * Get object to string
 	 * @returns 
 	 */
-	 getString() {
+	getString() {
 		const fields = {};
 		for(const field in this.constructor.fields) {
 			if(this.constructor.fields[field].type == "Object" && this[field]) {
 				try {
 					fields[field] = this[field].getString();
-				}catch(e) {
+				} catch(e) {
 					this.log(e);
 				}
-			}else {
+			} else {
 				fields[field] = this[field] != null ? this[field] : "";
 			}
 		}
@@ -156,8 +159,7 @@
 	 */
 	log(msg = "", level = 3) {
 		if(this.debug > level) {
-			msg = "[PATHQL] " + msg;
-			console.log(msg);
+			console.log("[PATHQL] ", msg);
 			this.logHistory.push(msg);
 		}
 		// push all messages in general to history would be use to much memory over the time for one object

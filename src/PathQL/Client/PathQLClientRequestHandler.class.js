@@ -20,7 +20,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 	init() {
 		this.socket = new WebSocket(this.url);
 		console.log("try to connect");
-		this.socket.addEventListener("open", async function (_event) {
+		this.socket.addEventListener("open", async function(_event) {
 			const openEvent = new CustomEvent("open");
 			this.dispatchEvent(openEvent);
 			console.log("client connected");
@@ -28,30 +28,30 @@ export class PathQLClientRequestHandler extends EventTarget {
 			resolve(this);
 		}.bind(this));
 
-		this.socket.addEventListener("message", function (event) {
-				const data = JSON.parse(event.data);
-				if(data.pong) {
-					this.lastPing = Date.now() - data.pong;
-					const pongEvent = new CustomEvent("pong", {detail: this.lastPing});
-					this.dispatchEvent(pongEvent);
-				}
+		this.socket.addEventListener("message", function(event) {
+			const data = JSON.parse(event.data);
+			if(data.pong) {
+				this.lastPing = Date.now() - data.pong;
+				const pongEvent = new CustomEvent("pong", {detail: this.lastPing});
+				this.dispatchEvent(pongEvent);
+			}
 
-				if(data.event != null && data.event.token != null) {
-					const obj = this.objectCache[data.event.token];
-					if(obj != null) {
-						const objEvent = new CustomEvent(data.event.cmd, {detail: data.event});
-						obj.dispatchEvent(objEvent);
-					}
+			if(data.event != null && data.event.token != null) {
+				const obj = this.objectCache[data.event.token];
+				if(obj != null) {
+					const objEvent = new CustomEvent(data.event.cmd, {detail: data.event});
+					obj.dispatchEvent(objEvent);
 				}
+			}
 
-				const messageEvent = new CustomEvent("message", {detail: data});
-				this.dispatchEvent(messageEvent);
+			const messageEvent = new CustomEvent("message", {detail: data});
+			this.dispatchEvent(messageEvent);
 		}.bind(this));
 
-		this.socket.addEventListener("close", function (_event) {
+		this.socket.addEventListener("close", function(_event) {
 			const closeEvent = new CustomEvent("close");
 			this.dispatchEvent(closeEvent);
-			console.log("socket connection closed try to reconnect in " + this.reconnectTime/1000 + " seconds");
+			console.log("socket connection closed try to reconnect in " + this.reconnectTime / 1000 + " seconds");
 			setTimeout(function() {
 				console.log("reconnect");
 				this.init();
@@ -76,10 +76,10 @@ export class PathQLClientRequestHandler extends EventTarget {
 
 					this.addEventListener("message", listener);
 					this.socket.send(JSON.stringify(msg));
-				}else {
+				} else {
 					console.log("[PathQL] Socket is not open yet!");
 				}
-			} catch (e) {
+			} catch(e) {
 				console.log(e);
 				reject(e);
 			}
@@ -106,7 +106,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 			const objects = await this.send({
 				getAllObjects: true
 			});
-	
+
 			const client = this;
 			for(const objectName in objects.objects) {
 				const object = objects.objects[objectName];
@@ -119,10 +119,10 @@ export class PathQLClientRequestHandler extends EventTarget {
 						static fields = object.fields;
 						static methods = object.methods;
 						static objects = object.objects;
-		
+
 						constructor() {
 							super({client: client, name: objectName});
-							return (function () {
+							return (function() {
 								return this;
 							}.bind(this)());
 						}
@@ -130,7 +130,7 @@ export class PathQLClientRequestHandler extends EventTarget {
 				}
 			}
 			return true;
-		}catch(_e) {
+		} catch(_e) {
 			return false;
 		}
 	}

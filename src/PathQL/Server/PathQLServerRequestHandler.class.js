@@ -4,7 +4,7 @@ import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
 /**
  * TODO: Implement an direct message connection between 2 users, etablish first an encrypted connection based on public keys of both and then send
  * messages between both.
- * IMPORTENT: No DDOS, DOS et. al. Filter message parsing, make somethink like an connection request on both sides before establish an connection with
+ * IMPORTANT: No DDOS, DOS et. al. Filter message parsing, make somethink like an connection request on both sides before establish an connection with
  * full avaible message sending
  * 
  * Same problem with the existing broaffdcast method
@@ -31,11 +31,11 @@ export class PathQLServerRequestHandler {
 		console.log(`${this.name} v${this.version} listen...`);
 		if(this.cert && this.key) {
 			this.listener = await Deno.listenTls({port: this.port, hostname: this.host, certFile: this.cert, keyFile: this.key});
-		}else {
+		} else {
 			this.listener = await Deno.listen({port: this.port, hostname: this.host});
 		}
 		this.run = true;
-		
+
 		while(this.run) {
 			this.handleConnection(await this.listener.accept());
 		}
@@ -79,8 +79,8 @@ export class PathQLServerRequestHandler {
 				try {
 					const msg = JSON.parse(e.data);
 					//if(!msg.csrf || msg.csrf !== this.csrfList[msg.messageCounter]) {
-						// return new csrf error message
-						//return false;
+					// return new csrf error message
+					//return false;
 					//}
 					const checkMsg = await this.prehandleMessage(msg, socket);
 					if(checkMsg && msg.pathql != null) {
@@ -127,19 +127,19 @@ export class PathQLServerRequestHandler {
 											}
 										}.bind(this));
 									}
-								} catch (e) {
+								} catch(e) {
 									console.error(e);
 									if(typeof(e.toJSON) == "function") {
 										answer[objName] = {
 											error: e.toJSON()
 										}
-									}else {
+									} else {
 										answer[objName] = {
 											error: e
 										}
 									}
 								}
-							}else {
+							} else {
 								answer[objName] = {
 									error: {
 										msg: "Object type not exists!"
@@ -154,16 +154,16 @@ export class PathQLServerRequestHandler {
 
 						answer.time = Date.now();
 						socket.send(JSON.stringify(answer));
-					}else if(msg.ping) {
+					} else if(msg.ping) {
 						socket.send(JSON.stringify({
 							pong: Date.now()
 						}));
-					}else if(msg.getObject) {
+					} else if(msg.getObject) {
 						const answer = {};
 						const object = await this.getObject(msg.getObject);
 						if(object) {
 							answer[msg.getObject] = object;
-						}else {
+						} else {
 							answer[msg.getObject] = {
 								error: {
 									msg: "Object not exists!"
@@ -175,14 +175,14 @@ export class PathQLServerRequestHandler {
 						}
 						answer.time = Date.now();
 						socket.send(JSON.stringify(answer));
-					}else if(msg.getAllObjects) {
+					} else if(msg.getAllObjects) {
 						const answer = {};
 						answer.objects = {};
 						for(const objectName in this.objects) {
 							const object = await this.getObject(objectName);
 							if(object) {
 								answer.objects[objectName] = object;
-							}else {
+							} else {
 								answer.objects[objectName] = {
 									error: {
 										msg: "Object not exists!"
@@ -196,7 +196,7 @@ export class PathQLServerRequestHandler {
 
 						answer.time = Date.now();
 						socket.send(JSON.stringify(answer));
-					}else {
+					} else {
 						// TODO: Fix this stuff above also a permission request?
 						const answer = {};
 						answer[objName] = {
@@ -211,23 +211,23 @@ export class PathQLServerRequestHandler {
 
 						answer.time = Date.now();
 						socket.send(JSON.stringify(answer));
-						
+
 					}
-				} catch (err) {
+				} catch(err) {
 					console.log(err);
 					this.addClientError(e.target, err);
 				}
 			}.bind(this));
 
 			socket.addEventListener("close", async function(e) {
-					for(const token in socket.edits) {
-						try {
-							await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
-						}catch(_e) {
-							console.log(`Unlock the object cache of ${token} failed.`);
-						}
+				for(const token in socket.edits) {
+					try {
+						await this.objectCache[token].unlockKey(socket.edits[token], {settings: {connection: socket}});
+					} catch(_e) {
+						console.log(`Unlock the object cache of ${token} failed.`);
 					}
-					delete(this.clients[e.target.id]);
+				}
+				delete (this.clients[e.target.id]);
 			}.bind(this));
 
 			socket.addEventListener("error", function(e) {
@@ -273,7 +273,7 @@ export class PathQLServerRequestHandler {
 				objects: objectArray,
 				methods: methodArray
 			};
-		}else {
+		} else {
 			return null;
 		}
 	}
@@ -289,11 +289,11 @@ export class PathQLServerRequestHandler {
 	 * @param {Error} e 
 	 */
 	addClientError(socket, e) {
-    if(this.debug) {
-      console.error(e);
-    }
-    socket.error = socket.error += e.message;
-  }
+		if(this.debug) {
+			console.error(e);
+		}
+		socket.error = socket.error += e.message;
+	}
 
 	/**
 	 * Log a message based on the level
@@ -301,7 +301,7 @@ export class PathQLServerRequestHandler {
 	 * @param {String} msg 
 	 * @param {Logging} level 
 	 */
-	 log(msg, level = 3) {
+	log(msg, level = 3) {
 		if(level <= this.logging) {
 			console.log("[PATHQL] " + msg);
 		}
