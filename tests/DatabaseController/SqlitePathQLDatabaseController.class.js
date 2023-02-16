@@ -12,6 +12,12 @@ export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
 		this.debug = this.options.debug ? this.options.debug : false;
 	}
 
+	/**
+	 * run an prepared statement
+	 * @param {*} statement 
+	 * @param {*} data 
+	 * @returns 
+	 */
 	runPrepared(statement, data) {
 		try {
 			if(this.debug) {
@@ -30,6 +36,10 @@ export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
 		}
 	}
 
+	/**
+	 * close the database connection
+	 * @returns 
+	 */
 	close() {
 		return this.connection.close();
 	}
