@@ -292,7 +292,7 @@ export class PathQLServerEntry extends InternalPathQLServerEntry {
 					await this[key][token].load(request);
 				}
 			}
-			return this[key];
+			return true;
 		} catch(e) {
 			this.log(`Load all entrys failed with error ${e}`);
 			if(!this.force) {
