@@ -17,7 +17,7 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 			port: this.options.port ? this.options.port : 5432,
 		});
 
-		return new Promise(async (res, err) => {
+		this.waitForConnection = new Promise(async (res, err) => {
 			try {
 				await this.connection.connect();
 				res();
