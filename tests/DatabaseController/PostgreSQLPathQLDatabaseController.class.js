@@ -17,6 +17,9 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 			port: this.options.port ? this.options.port : 5432,
 		});
 
+		// Fix integer max size bug
+		this.types["INT"]["database"] = "BIGINT";
+
 		this.waitForConnection = new Promise(async (res, err) => {
 			try {
 				await this.connection.connect();
