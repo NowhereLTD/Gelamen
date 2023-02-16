@@ -38,14 +38,14 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 	 */
 	async runPrepared(statement, data) {
 		try {
+			let count = 0;
+			statement = statement.replace(/\?/g, (_x) => {count++; return `$${count}`;});
+			statement = statement.replace("BIGINT PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY");
+
 			if(this.debug) {
 				console.log(statement);
 				console.log(data);
 			}
-
-			let count = 0;
-			statement = statement.replace(/\?/g, (_x) => {count++; return `$${count}`;});
-			statement = statement.replace("BIGINT PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY");
 
 			const result = await this.connection.queryArray(
 				statement,
