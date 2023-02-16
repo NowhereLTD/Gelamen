@@ -45,7 +45,7 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 
 			let count = 0;
 			statement = statement.replace(/\?/g, (_x) => {count++; return `$${count}`;});
-			statement = statement.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY");
+			statement = statement.replace("BIGINT PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY");
 
 			const result = await this.connection.queryArray(
 				statement,
