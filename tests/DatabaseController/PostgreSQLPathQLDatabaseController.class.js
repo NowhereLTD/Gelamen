@@ -18,7 +18,7 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 		});
 
 		// Fix integer max size bug
-		this.types["INT"]["database"] = "BIGINT";
+		this.types["INT"]["database"] = "TEXT";
 
 		this.waitForConnection = new Promise(async (res, err) => {
 			try {
@@ -40,7 +40,7 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 		try {
 			let count = 0;
 			statement = statement.replace(/\?/g, (_x) => {count++; return `$${count}`;});
-			statement = statement.replace("BIGINT PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY");
+			statement = statement.replace("TEXT PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY");
 
 			if(this.debug) {
 				console.log(statement);
