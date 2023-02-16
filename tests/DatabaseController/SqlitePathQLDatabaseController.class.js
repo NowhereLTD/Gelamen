@@ -6,8 +6,6 @@ import {PathQLDatabaseController} from "pathql/src/PathQL/Server/PathQLDatabaseC
  * Please Note: The "group" entry is not possible because of a naming conflict with the sqlite database.
  */
 export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
-	static AUTOINCREMENT = "";
-
 	constructor(options) {
 		super(options);
 		this.connection = new DB(this.options.name);
