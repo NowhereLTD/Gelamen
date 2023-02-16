@@ -6,8 +6,6 @@ import {PathQLDatabaseController} from "pathql/src/PathQL/Server/PathQLDatabaseC
  * Please Note: The "group" entry is not possible because of a naming conflict with the sqlite database.
  */
 export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController {
-	static AUTOINCREMENT = "";
-
 	constructor(options) {
 		super(options);
 		this.debug = this.options.debug ? this.options.debug : false;
@@ -44,6 +42,7 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 
 			let count = 0;
 			statement = statement.replace(/\?/g, (_x) => {count++; return `$${count}`;});
+			statement = statement.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY");
 
 			const result = await this.connection.queryArray(
 				statement,
