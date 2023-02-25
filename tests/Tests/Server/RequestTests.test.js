@@ -27,7 +27,7 @@ Deno.test("request test", async (_t) => {
 		await example.add({key: "contributors", token: user});
 		await example.add({key: "admin", token: user});
 
-		const requestExample = await new Example({"db": db});
+		const requestExample = await new Example({"db": db, "doCheckPermissions": false});
 		const data = await requestExample.parseRequest({
 			data: {
 				token: example.token,
@@ -38,11 +38,6 @@ Deno.test("request test", async (_t) => {
 				admin: {
 					name: "",
 					id: ""
-				}
-			},
-			settings: {
-				connection: {
-					permissions: ["*"]
 				}
 			}
 		});
