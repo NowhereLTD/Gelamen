@@ -3,25 +3,19 @@ import {Groups} from "pathql/tests/Entrys/Groups.pathql.js";
 
 export class User extends PathQLServerEntry {
 	static fields = {
-		"id": {
-			"type": "Int",
-			"db": {
-				"primary": true,
-				"autoincrement": true
-			}
-		},
 		"name": {
 			"type": "String"
 		}
 	}
 
-	constructor(options = {}, db) {
-		super(options, db);
+	constructor(options = {}) {
+		options.logging = "DEBUG";
+		super(options);
 		this.objects = {
 			"Groups": Groups
 		};
 		return (async function () {
-			await this.parseFromRaw();
+			await this.parseFromRaw(options);
 			return this;
 		}.bind(this)());
 	}

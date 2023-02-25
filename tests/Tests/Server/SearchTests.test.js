@@ -1,6 +1,7 @@
 import { SqlitePathQLDatabaseController } from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
 import { Example } from "pathql/tests/Entrys/Example.pathql.js";
 import { User } from "pathql/tests/Entrys/User.pathql.js";
+import {assertEquals} from "https://deno.land/std@0.159.0/testing/asserts.ts";
 
 Deno.test("basis test", async (_t) => {
 	const db = new SqlitePathQLDatabaseController({ "name": "test.db" });
@@ -8,33 +9,34 @@ Deno.test("basis test", async (_t) => {
 		console.log("----------------------");
 		console.log("[OK] start search test");
 		const user = await new User({
-			"name": "Test"
-		}, db);
-		await user.init();
+			"name": "Test",
+			"db": db,
+			"doCheckPermissions": false
+		});
 		await user.save();
 
 		const example = await new Example({
 			"name": "Test",
 			"email": "test@example.com",
 			"tagline": "My project",
-			"contributors": [user.id],
-			"admin": user.id
-		}, db);
-		await example.init();
+			"db": db,
+			"doCheckPermissions": false
+		});
 		await example.save();
+		await example.add({key: "admin", token: user});
 
-		const requestExample = await new Example({}, db);
+		const requestExample = await new Example({"db": db, "doCheckPermissions": false});
 
 		console.log("[OK] search by parameters");
 		const data = await requestExample.parseRequest({
 			data: {
 				search: {
-					ORDER: "id",
+					ORDER: "token",
 					LIMIT: 10,
 					START: 0,
 					"admin": {
-						type: "BETWEEN",
-						values: [0, user.id]
+						type: "EQUAL",
+						values: [user.token]
 					},
 					/*id: {
 						type: "EQUAL",
@@ -50,8 +52,6 @@ Deno.test("basis test", async (_t) => {
 							id: ""
 						}
 					}
-				},
-				count: {
 				}
 			},
 			settings: {
@@ -60,15 +60,7 @@ Deno.test("basis test", async (_t) => {
 				}
 			}
 		});
-		console.log(data.search[0]);
-
-		if (data.search) {
-			console.log("[OK] find objects by search parameter");
-		}
-
-		if (data.count) {
-			console.log("[OK] found " + data.count + " objects.");
-		}
+		assertEquals(data.search.length, 1);
 
 		// Clear data
 		console.log("[OK] clear search test data");
@@ -77,6 +69,8 @@ Deno.test("basis test", async (_t) => {
 	} catch (e) {
 		console.log(e);
 		console.log("[Error] test failed cannot find object...");
+		db.close();
+		throw e;
 	}
 	db.close();
 });

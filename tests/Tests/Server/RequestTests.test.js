@@ -1,58 +1,50 @@
 import { SqlitePathQLDatabaseController } from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
 import { Example } from "pathql/tests/Entrys/Example.pathql.js";
 import { User } from "pathql/tests/Entrys/User.pathql.js";
+import {assertEquals} from "https://deno.land/std@0.159.0/testing/asserts.ts";
 
-Deno.test("basis test", async (_t) => {
+Deno.test("request test", async (_t) => {
 	const db = new SqlitePathQLDatabaseController({ "name": "test.db" });
 	try {
 		console.log("----------------------");
 		console.log("[OK] start request test");
 		console.log("[OK] create a new object");
 		const user = await new User({
-			"name": "Test"
-		}, db);
-		await user.init();
+			"name": "Test",
+			"db": db,
+			"doCheckPermissions": false
+		});
 		await user.save();
 
 		const example = await new Example({
 			"name": "Test",
 			"email": "test@example.com",
 			"tagline": "My project",
-			"contributors": [user.id],
-			"admin": user.id
-		}, db);
-		await example.init();
+			"db": db,
+			"doCheckPermissions": false
+		});
 		await example.save();
+		await example.add({key: "contributors", token: user});
+		await example.add({key: "admin", token: user});
 
-		const requestExample = await new Example({}, db);
-
-		/**
-		 * send request and check request data anwser
-		 */
-		/*const requestData = {};
-		for(const key in Example.fields) {
-			requestData[key] = "";
-		}
-		requestData.id = example.id;
-		const data = await requestExample.parseRequest({
-			data: requestData
-		});*/
-
+		const requestExample = await new Example({"db": db, "doCheckPermissions": false});
 		const data = await requestExample.parseRequest({
 			data: {
-				id: example.id,
+				token: example.token,
 				contributors: {
-					name: ""
-				}
-			},
-			settings: {
-				connection: {
-					permissions: ["*"]
+					name: "",
+					id: ""
+				},
+				admin: {
+					name: "",
+					id: ""
 				}
 			}
 		});
+		assertEquals(data.contributors[0].name, "Test");
+		assertEquals(data.admin[0].name, "Test");
+		assertEquals(data.admin[0].id, data.contributors[0].id);
 
-		console.log(data);
 		console.log("[OK] find request object");
 
 		// Clear data
@@ -62,6 +54,8 @@ Deno.test("basis test", async (_t) => {
 	} catch (e) {
 		console.log(e);
 		console.log("[Error] test failed cannot find object...");
+		db.close();
+		throw e;
 	}
 	db.close();
 });
