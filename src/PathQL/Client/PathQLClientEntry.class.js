@@ -29,8 +29,8 @@ export class PathQLClientEntry extends EventTarget {
 				this.log(`{${this.internal_name}} run method ${method}`);
 				const request = {
 					pathql: {}
-				}
-				request.pathql[this.internal_name] = this.getString();
+				};
+				request.pathql[this.internal_name] = await this.getString();
 				request.pathql[this.internal_name][method] = data;
 				this.log(`send request: ${JSON.stringify(request)}`);
 				const response = await this.send(request);
@@ -73,11 +73,11 @@ export class PathQLClientEntry extends EventTarget {
 	 * @param {JSON} data 
 	 * @returns 
 	 */
-	async parseEntity(data, obj) {
+	async parseEntity(data, obj, objName = this.internal_name) {
 		this.log("Parse new entity");
 		this.log(data);
 		if(!obj) {
-			obj = await new this.client.objects[this.internal_name]({client: this.client, name: this.internal_name}, this.debug);
+			obj = await new this.client.objects[objName]({client: this.client, name: objName});
 		}
 		/*if(data.token != null) {
 			if(this.client.objectCache[data.token] != null) {
@@ -92,7 +92,7 @@ export class PathQLClientEntry extends EventTarget {
 			if(data[key]) {
 				if(field.type === "Object" && typeof(data[key]) === "object" && this.client.objects[field.object]) {
 					const cacheObj = new this.client.objects[field.object](this.options);
-					if(field.array) {
+					if(data[key].length > 1) {
 						obj[key] = [];
 						for(const token of data[key]) {
 							obj[key].push(await cacheObj.parseEntity({token: token}));
@@ -127,12 +127,18 @@ export class PathQLClientEntry extends EventTarget {
 	 * Get object to string
 	 * @returns 
 	 */
-	getString() {
+	async getString(isNested = false) {
 		const fields = {};
 		for(const field in this.constructor.fields) {
-			if(this.constructor.fields[field].type == "Object" && this[field]) {
+			const fieldEl = this.constructor.fields[field];
+			if(fieldEl.type == "Object" && !isNested) {
 				try {
-					fields[field] = this[field].getString();
+					if(this[field]) {
+						fields[field] = await this[field].getString();
+					} else {
+						const cacheObj = await new this.client.objects[fieldEl.object]({client: this.client, name: fieldEl.object});
+						fields[field] = await cacheObj.getString(true);
+					}
 				} catch(e) {
 					this.log(e);
 				}
