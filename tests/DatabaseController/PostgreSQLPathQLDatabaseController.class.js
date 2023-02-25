@@ -20,11 +20,13 @@ export class PostgreSQLPathQLDatabaseController extends PathQLDatabaseController
 		// Fix integer max size bug
 		this.types["INT"]["database"] = "TEXT";
 
-		this.waitForConnection = new Promise(async (res, err) => {
+		this.waitForConnection = new Promise((res, err) => {
 			try {
-				await this.connection.connect();
-				res();
-			}catch(e) {
+				async () => {
+					await this.connection.connect();
+					res();
+				}
+			}catch(_e) {
 				err();
 			}
 		});
