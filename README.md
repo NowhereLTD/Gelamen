@@ -54,14 +54,14 @@ export class Groups extends GelamenServerEntry {
 The server handles the client requests and gives you the possibility to provide your backend entrys to your frontend.
 
 ```javascript
-import {SqliteGelamenDatabaseController} from "gelamen/tests/DatabaseController/SqliteGelamenDatabaseController.class.js";
+import {GelamenSqliteDatabaseController} from "gelamen/tests/DatabaseController/GelamenSqliteDatabaseController.class.js";
 import {GelamenServerRequestHandler} from "gelamen/src/Gelamen/Server/GelamenServerRequestHandler.class.js";
 import {Groups} from "src/Groups.class.js";
 
 export class YourServer extends GelamenServerRequestHandler {
   constructor(options) {
     super(options);
-    const db = new SqliteGelamenDatabaseController({name: "Test.sqlite", debug: false});
+    const db = new GelamenSqliteDatabaseController({name: "Test.sqlite", debug: false});
     super({"db": db, name: "Test API"});
     this.objects = {
       "Groups": Groups
@@ -77,8 +77,8 @@ Show into tests/ folder for Entry and Request examples.
 Pathql Supports SQLite and PostgreSQL Databases:
 ```javascript
 // PostgreSQL example
-import {PostgreSQLGelamenDatabaseController} from "gelamen/tests/DatabaseController/PostgreSQLGelamenDatabaseController.class.js";
-const db = new PostgreSQLGelamenDatabaseController({database: "test", username: "administrator", password: "eiB3ahlaequo3lan3Phahfai8winohl9", debug: false});
+import {GelamenPostgreSQLDatabaseController} from "gelamen/tests/DatabaseController/GelamenPostgreSQLDatabaseController.class.js";
+const db = new GelamenPostgreSQLDatabaseController({database: "test", username: "administrator", password: "eiB3ahlaequo3lan3Phahfai8winohl9", debug: false});
 
 // SQLite example
 import {SqliteGelamenDatabaseController} from "gelamen/tests/DatabaseController/SqliteGelamenDatabaseController.class.js";
