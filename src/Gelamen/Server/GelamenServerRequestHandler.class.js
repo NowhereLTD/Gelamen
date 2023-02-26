@@ -303,7 +303,7 @@ export class GelamenServerRequestHandler {
 	 */
 	log(msg, level = 3) {
 		if(level <= this.logging) {
-			console.log("[PATHQL] " + msg);
+			console.log("[GELAMEN] " + msg);
 		}
 	}
 }
