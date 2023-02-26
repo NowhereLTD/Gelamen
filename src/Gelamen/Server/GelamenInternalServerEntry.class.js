@@ -130,7 +130,7 @@ export class GelamenInternalServerEntry extends EventTarget {
 	log(msg, level = 3) {
 		try {
 			if(level <= this.logging) {
-				console.log("[PATHQL] ", msg);
+				console.log("[GELAMEN] ", msg);
 			}
 		} catch(_e) {
 			return false;

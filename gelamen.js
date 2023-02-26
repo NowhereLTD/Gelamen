@@ -8,7 +8,7 @@ import {GelamenTypeError} from "gelamen/src/Gelamen/Error/GelamenTypeError.class
 import {GelamenAlredyExistsError} from "gelamen/src/Gelamen/Error/GelamenAlredyExistsError.class.js";
 
 // "Third Party"
-import {SqliteGelamenDatabaseController} from "gelamen/tests/DatabaseController/SqliteGelamenDatabaseController.class.js";
+import {GelamenSqliteDatabaseController} from "gelamen/tests/DatabaseController/GelamenSqliteDatabaseController.class.js";
 
 export {
   GelamenServerEntry,
@@ -17,5 +17,5 @@ export {
   GelamenNotExistsError,
   GelamenTypeError,
   GelamenAlredyExistsError,
-  SqliteGelamenDatabaseController
+  GelamenSqliteDatabaseController
 };

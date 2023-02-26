@@ -165,7 +165,7 @@ export class GelamenClientEntry extends EventTarget {
 	 */
 	log(msg = "", level = 3) {
 		if(this.debug > level) {
-			console.log("[PATHQL] ", msg);
+			console.log("[GELAMEN] ", msg);
 			this.logHistory.push(msg);
 		}
 		// push all messages in general to history would be use to much memory over the time for one object
