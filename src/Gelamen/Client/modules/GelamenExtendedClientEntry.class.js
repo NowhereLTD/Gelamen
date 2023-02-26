@@ -1,11 +1,11 @@
-import {PathQLClientEntry} from "../PathQLClientEntry.class.js";
+import {GelamenClientEntry} from "../GelamenClientEntry.class.js";
 import * as openpgp from "../../../lib/openpgp.js";
 
 /**
- * This inits an extended PathQLClient Entry which can also handle encryption et al via default.
+ * This inits an extended GelamenClient Entry which can also handle encryption et al via default.
  * @argument options - contains an specific options field, with informations about the fields and so on.
  */
-export class ExtendedPathQLClientEntry extends PathQLClientEntry {
+export class GelamenExtendedClientEntry extends GelamenClientEntry {
 	constructor(options = {}) {
 		super(options);
 	}

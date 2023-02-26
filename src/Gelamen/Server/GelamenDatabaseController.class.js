@@ -1,7 +1,7 @@
-import Types from "pathql/etc/data/types.json" assert {type: "json"};
-import {PathQLError} from "pathql/src/PathQL/Error/PathQLError.class.js";
+import Types from "gelamen/etc/data/types.json" assert {type: "json"};
+import {GelamenError} from "gelamen/src/Gelamen/Error/GelamenError.class.js";
 
-export class PathQLDatabaseController {
+export class GelamenDatabaseController {
 	static AUTOINCREMENT = "AUTOINCREMENT";
 	static PRIMARY = "PRIMARY KEY";
 	static UNIQUE = "UNIQUE";
@@ -29,7 +29,7 @@ export class PathQLDatabaseController {
 		if(this.types[type] != null) {
 			return this.types[type];
 		} else {
-			throw new PathQLError({msg: `Cannot found the specific type <${type}> in the database handler!`});
+			throw new GelamenError({msg: `Cannot found the specific type <${type}> in the database handler!`});
 		}
 	}
 

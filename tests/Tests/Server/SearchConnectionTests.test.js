@@ -1,10 +1,10 @@
-import { SqlitePathQLDatabaseController } from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
-import { Groups } from "pathql/tests/Entrys/Groups.pathql.js";
-import { User } from "pathql/tests/Entrys/User.pathql.js";
+import { GelamenSqliteDatabaseController } from "gelamen/tests/DatabaseController/GelamenSqliteDatabaseController.class.js";
+import { Groups } from "gelamen/tests/Entrys/Groups.gelamen.js";
+import { User } from "gelamen/tests/Entrys/User.gelamen.js";
 import {assertEquals} from "https://deno.land/std@0.159.0/testing/asserts.ts";
 
 Deno.test("search connection test", async (_t) => {
-	const db = new SqlitePathQLDatabaseController({ "name": "test.db" });
+	const db = new GelamenSqliteDatabaseController({ "name": "test.db" });
 	try {
 		console.log("----------------------");
 		console.log("[OK] start search connection test");

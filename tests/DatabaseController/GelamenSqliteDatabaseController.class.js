@@ -1,11 +1,11 @@
 import {DB} from "https://deno.land/x/sqlite/mod.ts";
-import {PathQLDatabaseController} from "pathql/src/PathQL/Server/PathQLDatabaseController.class.js";
+import {GelamenDatabaseController} from "gelamen/src/Gelamen/Server/GelamenDatabaseController.class.js";
 
 /**
- * This is an example implementation for an PathQLDatabaseController based on an sqkite Database Implementation
+ * This is an example implementation for an GelamenDatabaseController based on an sqkite Database Implementation
  * Please Note: The "group" entry is not possible because of a naming conflict with the sqlite database.
  */
-export class SqlitePathQLDatabaseController extends PathQLDatabaseController {
+export class GelamenSqliteDatabaseController extends GelamenDatabaseController {
 	constructor(options) {
 		super(options);
 		this.connection = new DB(this.options.name);

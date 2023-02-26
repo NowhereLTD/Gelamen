@@ -1,14 +1,14 @@
-/*import { SqlitePathQLDatabaseController } from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
-import { TestServer } from "pathql/tests/Entrys/TestServer.class.js";
-import { PathQLClientRequestHandler } from "pathql/src/PathQL/Client/PathQLClientRequestHandler.class.js";
+/*import { SqliteGelamenDatabaseController } from "gelamen/tests/DatabaseController/SqliteGelamenDatabaseController.class.js";
+import { TestServer } from "gelamen/tests/Entrys/TestServer.class.js";
+import { GelamenClientRequestHandler } from "gelamen/src/Gelamen/Client/GelamenClientRequestHandler.class.js";
 */
-Deno.test("pathql request client and server handler test", async (_t) => {
-	/*const db = new SqlitePathQLDatabaseController({ "name": "test.db" });
+Deno.test("gelamen request client and server handler test", async (_t) => {
+	/*const db = new SqliteGelamenDatabaseController({ "name": "test.db" });
 	const server = new TestServer({db: db});
   console.log("start server...");
   server.listen();
   await new Promise((resolve) => setTimeout(resolve,  500));
-  const client = new PathQLClientRequestHandler();
+  const client = new GelamenClientRequestHandler();
   await new Promise((resolve) => setTimeout(resolve,  1000));
   console.log("send request");
   const data = client.send({

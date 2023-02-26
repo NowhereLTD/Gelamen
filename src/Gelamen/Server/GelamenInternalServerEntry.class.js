@@ -1,25 +1,25 @@
 /**
- * A PathQLServerEntry represent a table or an entry
+ * A GelamenServerEntry represent a table or an entry
  * 
  * It can contains "standard" fields like Strings, Booleans, Integer ...
- * or "Object" fields, which represent a array or a single PathQLServerEntry
+ * or "Object" fields, which represent a array or a single GelamenServerEntry
  * based on foreign tables.
  * 
  * The goals of the project are robustness, speed, Avoid redundant data.
  * 
- * Futuremore handles the PathQLServerEntry requests, permissions and history
+ * Futuremore handles the GelamenServerEntry requests, permissions and history
  *
  */
-import {PathQLDatabaseError} from "pathql/src/PathQL/Error/PathQLDatabaseError.class.js";
-import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
-import {PathQLNoPermissionError} from "pathql/src/PathQL/Error/PathQLNoPermissionError.class.js";
-import {PathQLFieldMissingError} from "pathql/src/PathQL/Error/PathQLFieldMissingError.class.js";
-import {PathQLValidationError} from "pathql/src/PathQL/Error/PathQLValidationError.class.js";
-import {PathQLError} from "pathql/src/PathQL/Error/PathQLError.class.js";
+import {GelamenDatabaseError} from "gelamen/src/Gelamen/Error/GelamenDatabaseError.class.js";
+import {GelamenNotExistsError} from "gelamen/src/Gelamen/Error/GelamenNotExistsError.class.js";
+import {GelamenNoPermissionError} from "gelamen/src/Gelamen/Error/GelamenNoPermissionError.class.js";
+import {GelamenFieldMissingError} from "gelamen/src/Gelamen/Error/GelamenFieldMissingError.class.js";
+import {GelamenValidationError} from "gelamen/src/Gelamen/Error/GelamenValidationError.class.js";
+import {GelamenError} from "gelamen/src/Gelamen/Error/GelamenError.class.js";
 
-import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
+import Logging from "gelamen/etc/data/logging.json" assert {type: "json"};
 
-export class InternalPathQLServerEntry extends EventTarget {
+export class GelamenInternalServerEntry extends EventTarget {
 	static fields = {};
 	static prefix = "pql";
 	static methods = {};
@@ -48,8 +48,8 @@ export class InternalPathQLServerEntry extends EventTarget {
 			if(options.db instanceof Object) {
 				this.db = options.db;
 			} else {
-				this.log("Database is no instance of PathQLDatabaseController", 1);
-				throw new PathQLDatabaseError({msg: "Database is no instance of PathQLDatabaseController"});
+				this.log("Database is no instance of GelamenDatabaseController", 1);
+				throw new GelamenDatabaseError({msg: "Database is no instance of GelamenDatabaseController"});
 			}
 		}
 		this.force = options.force ? options.force : false;
@@ -231,14 +231,14 @@ export class InternalPathQLServerEntry extends EventTarget {
 			if(hasPerm) {
 				return true;
 			} else {
-				throw new PathQLNoPermissionError({
+				throw new GelamenNoPermissionError({
 					msg: "The user has no permission to do this.",
 					permission: newPermission
 				});
 			}
 		}
 		this.log(`Check Permission ${permission} failed!`, 5);
-		throw new PathQLNoPermissionError({
+		throw new GelamenNoPermissionError({
 			msg: "The user has no permission to do this.",
 			permission: permission
 		});
@@ -330,7 +330,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 			} catch(e) {
 				this.log(`The field <${key}> parsing throws an error: ${e}`, 1);
 				if(!this.force) {
-					throw new PathQLError(`Parsing failed with ${e}`);
+					throw new GelamenError(`Parsing failed with ${e}`);
 				}
 			}
 		}
@@ -426,7 +426,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 		if(value == undefined) {
 			console.error(value + " : " + key + " is undefined!");
 			if(!this.force) {
-				throw new PathQLValidationError({msg: value + " : " + key + " is undefined!"});
+				throw new GelamenValidationError({msg: value + " : " + key + " is undefined!"});
 			}
 			return false;
 		}
@@ -438,7 +438,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 		} else {
 			console.error("Validation failed!");
 			if(!this.force) {
-				throw new PathQLValidationError({msg: "Validation failed!"});
+				throw new GelamenValidationError({msg: "Validation failed!"});
 			}
 			return false;
 		}
@@ -492,7 +492,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 				}
 				this.log(`Cannot save the entry into database!`, 1);
 				if(!this.force) {
-					throw new PathQLDatabaseError({msg: "Cannot save the entry into database!"});
+					throw new GelamenDatabaseError({msg: "Cannot save the entry into database!"});
 				}
 			}
 		} catch(e) {
@@ -516,7 +516,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 			if(this.token == null) {
 				this.log(`Cannot delete object ${this.constructor.name} if it does not contain an token!`);
 				if(!this.force) {
-					throw new PathQLFieldMissingError({
+					throw new GelamenFieldMissingError({
 						msg: `Cannot delete object ${this.constructor.name} if it does not contain an token!`,
 						field: "token"
 					});
@@ -549,7 +549,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 			if(this.token == null) {
 				this.log(`Cannot load object ${this.constructor.name} if it does not contain an token!`);
 				if(!this.force) {
-					throw new PathQLFieldMissingError({
+					throw new GelamenFieldMissingError({
 						msg: `Cannot load object ${this.constructor.name} if it does not contain an token!`,
 						field: "token"
 					});
@@ -570,7 +570,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 					i++;
 				}
 			} else {
-				throw new PathQLNotExistsError({msg: `Cannot load object ${this.constructor.name} with token ${this.token}!`});
+				throw new GelamenNotExistsError({msg: `Cannot load object ${this.constructor.name} with token ${this.token}!`});
 			}
 			await this.parseFromRaw(data);
 
@@ -703,7 +703,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 	}
 
 	/**
-	 * Compare a PathQLServerEntry name with this entity server entry name and return a foreign table
+	 * Compare a GelamenServerEntry name with this entity server entry name and return a foreign table
 	 * @param {Object} object 
 	 * @returns 
 	 */
@@ -775,7 +775,7 @@ export class InternalPathQLServerEntry extends EventTarget {
 	async getFieldJSON(fields, request = {}) {
 		const obj = await new this.constructor({db: this.db, token: fields.token, doCheckPermissions: this.doCheckPermissions});
 		if(!await obj.load(request)) {
-			throw new PathQLNotExistsError({msg: `object ${obj.constructor.name} with token ${obj.token} not found`});
+			throw new GelamenNotExistsError({msg: `object ${obj.constructor.name} with token ${obj.token} not found`});
 		}
 
 		const data = {};

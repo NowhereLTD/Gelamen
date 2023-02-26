@@ -1,8 +1,8 @@
-import { SqlitePathQLDatabaseController } from "pathql/tests/DatabaseController/SqlitePathQLDatabaseController.class.js";
-import { User } from "pathql/tests/Entrys/User.pathql.js";
+import { GelamenSqliteDatabaseController } from "gelamen/tests/DatabaseController/GelamenSqliteDatabaseController.class.js";
+import { User } from "gelamen/tests/Entrys/User.gelamen.js";
 
 Deno.test("store test", async (_t) => {
-	const db = new SqlitePathQLDatabaseController({"name": "test.db"});
+	const db = new GelamenSqliteDatabaseController({"name": "test.db"});
 	try {
 		const user = await new User({
 			"db": db,

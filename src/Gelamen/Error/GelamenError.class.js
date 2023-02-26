@@ -1,4 +1,4 @@
-export class PathQLError extends Error {
+export class GelamenError extends Error {
 	constructor(json) {
 		super(json.msg);
 		this.msg = json.msg;
