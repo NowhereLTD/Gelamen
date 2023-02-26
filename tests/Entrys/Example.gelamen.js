@@ -1,7 +1,7 @@
-import {PathQLServerEntry} from "pathql/src/PathQL/Server/PathQLServerEntry.class.js";
-import {User} from "pathql/tests/Entrys/User.pathql.js";
+import {GelamenServerEntry} from "gelamen/src/Gelamen/Server/GelamenServerEntry.class.js";
+import {User} from "gelamen/tests/Entrys/User.gelamen.js";
 
-export class Example extends PathQLServerEntry {
+export class Example extends GelamenServerEntry {
 	static fields = {
 		"name": {
 			"type": "String"

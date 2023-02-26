@@ -1,5 +1,5 @@
-import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
-import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
+import {GelamenNotExistsError} from "gelamen/src/Gelamen/Error/GelamenNotExistsError.class.js";
+import Logging from "gelamen/etc/data/logging.json" assert {type: "json"};
 
 /**
  * TODO: Implement an direct message connection between 2 users, etablish first an encrypted connection based on public keys of both and then send
@@ -9,11 +9,11 @@ import Logging from "pathql/etc/data/logging.json" assert {type: "json"};
  * 
  * Same problem with the existing broaffdcast method
  */
-export class PathQLServerRequestHandler {
+export class GelamenServerRequestHandler {
 	constructor(options = {}) {
 		this.port = options.port ? options.port : 9080;
 		this.host = options.host ? options.host : "localhost";
-		this.name = options.name ? options.name : "PathQLServerRequestHandler";
+		this.name = options.name ? options.name : "GelamenServerRequestHandler";
 		this.version = options.version ? options.version : "0.1";
 		this.db = options.db ? options.db : null;
 		this.logging = Logging[options.logging] != null ? Logging[options.logging] : Logging.ERROR;
@@ -23,7 +23,7 @@ export class PathQLServerRequestHandler {
 		this.objects = {};
 		this.objectCache = {};
 		if(!this.db) {
-			throw new PathQLNotExistsError({msg: "database not given!"});
+			throw new GelamenNotExistsError({msg: "database not given!"});
 		}
 	}
 
@@ -83,16 +83,16 @@ export class PathQLServerRequestHandler {
 					//return false;
 					//}
 					const checkMsg = await this.prehandleMessage(msg, socket);
-					if(checkMsg && msg.pathql != null) {
+					if(checkMsg && msg.gelamen != null) {
 						const answer = {};
-						for(const objName in msg.pathql) {
+						for(const objName in msg.gelamen) {
 							if(this.objects[objName] != null) {
 								try {
-									msg.pathql[objName].data = msg.pathql[objName].data ? msg.pathql[objName].data : {};
-									if(msg.pathql[objName].token != null && msg.pathql[objName].token != "") {
-										if(this.objectCache[msg.pathql[objName].token] != null) {
-											answer[objName] = await this.objectCache[msg.pathql[objName].token].parseRequest({
-												data: msg.pathql[objName],
+									msg.gelamen[objName].data = msg.gelamen[objName].data ? msg.gelamen[objName].data : {};
+									if(msg.gelamen[objName].token != null && msg.gelamen[objName].token != "") {
+										if(this.objectCache[msg.gelamen[objName].token] != null) {
+											answer[objName] = await this.objectCache[msg.gelamen[objName].token].parseRequest({
+												data: msg.gelamen[objName],
 												settings: {
 													connection: socket
 												}
@@ -102,7 +102,7 @@ export class PathQLServerRequestHandler {
 									}
 									const obj = await new this.objects[objName]({db: this.db});
 									answer[objName] = await obj.parseRequest({
-										data: msg.pathql[objName],
+										data: msg.gelamen[objName],
 										settings: {
 											connection: socket
 										}
@@ -202,7 +202,7 @@ export class PathQLServerRequestHandler {
 						answer[objName] = {
 							error: {
 								msg: "Failed to run request!",
-								type: "PathQLNoLoginError"
+								type: "GelamenNoLoginError"
 							}
 						}
 						if(msg.messageCounter != undefined) {

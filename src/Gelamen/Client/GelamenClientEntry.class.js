@@ -1,13 +1,13 @@
 /**
- * PathQLClientEntry represent a clone of the backend entry and allows the developer to simple create and handle requests
+ * GelamenClientEntry represent a clone of the backend entry and allows the developer to simple create and handle requests
  */
-export class PathQLClientEntry extends EventTarget {
+export class GelamenClientEntry extends EventTarget {
 	static fields = {};
 
-	// pathql
+	// gelamen
 	static methods = {};
 
-	static name = "PathQLClientEntry";
+	static name = "GelamenClientEntry";
 
 	/**
 	 * @param {JSON} options 
@@ -28,10 +28,10 @@ export class PathQLClientEntry extends EventTarget {
 				this.error = null;
 				this.log(`{${this.internal_name}} run method ${method}`);
 				const request = {
-					pathql: {}
+					gelamen: {}
 				};
-				request.pathql[this.internal_name] = await this.getString();
-				request.pathql[this.internal_name][method] = data;
+				request.gelamen[this.internal_name] = await this.getString();
+				request.gelamen[this.internal_name][method] = data;
 				this.log(`send request: ${JSON.stringify(request)}`);
 				const response = await this.send(request);
 				this.log(`get server answer: ${JSON.stringify(response)}`);

@@ -1,19 +1,19 @@
 /**
- * A PathQLServerEntry represent a table or an entry
+ * A GelamenServerEntry represent a table or an entry
  * 
  * This Entry includes all methods that are directly available for the client.
  */
-import {PathQLNotExistsError} from "pathql/src/PathQL/Error/PathQLNotExistsError.class.js";
-import {PathQLNoPermissionError} from "pathql/src/PathQL/Error/PathQLNoPermissionError.class.js";
-import {PathQLFieldMissingError} from "pathql/src/PathQL/Error/PathQLFieldMissingError.class.js";
-import {PathQLError} from "pathql/src/PathQL/Error/PathQLError.class.js";
-import {InternalPathQLServerEntry} from "./InternalPathQLServerEntry.class.js"
+import {GelamenNotExistsError} from "gelamen/src/Gelamen/Error/GelamenNotExistsError.class.js";
+import {GelamenNoPermissionError} from "gelamen/src/Gelamen/Error/GelamenNoPermissionError.class.js";
+import {GelamenFieldMissingError} from "gelamen/src/Gelamen/Error/GelamenFieldMissingError.class.js";
+import {GelamenError} from "gelamen/src/Gelamen/Error/GelamenError.class.js";
+import {GelamenInternalServerEntry} from "./GelamenInternalServerEntry.class.js"
 
-import Search from "pathql/etc/data/search.json" assert {type: "json"};
-import Where from "pathql/etc/data/where.json" assert {type: "json"};
+import Search from "gelamen/etc/data/search.json" assert {type: "json"};
+import Where from "gelamen/etc/data/where.json" assert {type: "json"};
 
 
-export class PathQLServerEntry extends InternalPathQLServerEntry {
+export class GelamenServerEntry extends GelamenInternalServerEntry {
 	/**
 	 * @param {JSON} options 
 	 */
@@ -21,11 +21,11 @@ export class PathQLServerEntry extends InternalPathQLServerEntry {
 		super(options);
 	}
 
-	addPathQLField(_name, _data = {}, _force = false) {}
-	removePathQLField(_name, _force = false) {}
-	setPathQLPrefix(_name, _force = false) {}
-	addPathQLMethod(_name, _data = {}, _force = false) {}
-	removePathQLMethod(_name, _force = false) {}
+	addGelamenField(_name, _data = {}, _force = false) {}
+	removeGelamenField(_name, _force = false) {}
+	setGelamenPrefix(_name, _force = false) {}
+	addGelamenMethod(_name, _data = {}, _force = false) {}
+	removeGelamenMethod(_name, _force = false) {}
 
 	/**
 	 * Store method for client
@@ -37,7 +37,7 @@ export class PathQLServerEntry extends InternalPathQLServerEntry {
 			// permission check
 			return [this.parseToRaw()];
 		} else {
-			throw new PathQLError({msg: `Error while store entity!`});
+			throw new GelamenError({msg: `Error while store entity!`});
 		}
 	}
 
@@ -142,7 +142,7 @@ export class PathQLServerEntry extends InternalPathQLServerEntry {
 				}
 			} catch(e) {
 				this.log(e);
-				if(!(e instanceof PathQLNoPermissionError)) {
+				if(!(e instanceof GelamenNoPermissionError)) {
 					throw e;
 				}
 			}
@@ -188,7 +188,7 @@ export class PathQLServerEntry extends InternalPathQLServerEntry {
 		} else {
 			this.log(`Cannot add an entry if the entity ${this.constructor.name} has no token!`);
 			if(!this.force) {
-				throw new PathQLFieldMissingError({msg: `Cannot add an entry if the entity ${this.constructor.name} has no token!`});
+				throw new GelamenFieldMissingError({msg: `Cannot add an entry if the entity ${this.constructor.name} has no token!`});
 			}
 		}
 		return false;
@@ -230,7 +230,7 @@ export class PathQLServerEntry extends InternalPathQLServerEntry {
 		} else {
 			this.log(`Cannot remove an entry if the entity ${this.constructor.name} has no token!`);
 			if(!this.force) {
-				throw new PathQLFieldMissingError({msg: `Cannot remove an entry if the entity ${this.constructor.name} has no token!`});
+				throw new GelamenFieldMissingError({msg: `Cannot remove an entry if the entity ${this.constructor.name} has no token!`});
 			}
 		}
 		return true;
@@ -374,17 +374,17 @@ export class PathQLServerEntry extends InternalPathQLServerEntry {
 	async updateKey(data, request = {}) {
 		if(this.token == null) {
 			this.log(`Cannot update object ${this.constructor.name} without token!`);
-			throw new PathQLNotExistsError({msg: `Cannot update object ${this.constructor.name} without token!`});
+			throw new GelamenNotExistsError({msg: `Cannot update object ${this.constructor.name} without token!`});
 		}
 		const key = data.key;
 		const value = data.value;
 		this.checkPermission(`${key}.update`, request);
 		const field = this.fields[key];
 		if(field == null) {
-			throw new PathQLFieldMissingError({msg: `The field for ${key} does not exists`});
+			throw new GelamenFieldMissingError({msg: `The field for ${key} does not exists`});
 		}
 		if(field.fixed) {
-			throw new PathQLError({msg: `The field for ${key} is static you can't update it!`});
+			throw new GelamenError({msg: `The field for ${key} is static you can't update it!`});
 		}
 
 		this.validate(value, this.db.getType(field.type), key);

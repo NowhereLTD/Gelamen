@@ -1,9 +1,9 @@
-import {PathQLServerRequestHandler} from "pathql/src/PathQL/Server/PathQLServerRequestHandler.class.js";
-import {Example} from "pathql/tests/Entrys/Example.pathql.js";
-import {Groups} from "pathql/tests/Entrys/Groups.pathql.js";
-import {User} from "pathql/tests/Entrys/User.pathql.js";
+import {GelamenServerRequestHandler} from "gelamen/src/Gelamen/Server/GelamenServerRequestHandler.class.js";
+import {Example} from "gelamen/tests/Entrys/Example.gelamen.js";
+import {Groups} from "gelamen/tests/Entrys/Groups.gelamen.js";
+import {User} from "gelamen/tests/Entrys/User.gelamen.js";
 
-export class TestServer extends PathQLServerRequestHandler {
+export class TestServer extends GelamenServerRequestHandler {
 
   static objects = {
     "Example": Example,
