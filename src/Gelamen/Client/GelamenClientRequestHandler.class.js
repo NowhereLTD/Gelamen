@@ -10,8 +10,8 @@ export class GelamenClientRequestHandler extends EventTarget {
 		this.url = options.url ? options.url : "ws://localhost:9080";
 		this.objects = {};
 		this.objectCache = {};
-		this.baseClass = options.baseClass ? options.baseClass : GelamenClientEntry;
-		// This holds a user specific class list with custom class to implement custom gelamencliententry objects with own functions
+		this.baseClass = options.baseClass ? options.baseClass : PathQLClientEntry;
+		// This holds a user specific class list with custom class to implement custom pathqlcliententry objects with own functions
 		// f.e. a user class with a specific crypt method
 		this.baseClassList = options.baseClassList ? options.baseClassList : {};
 		this.init();
@@ -77,7 +77,7 @@ export class GelamenClientRequestHandler extends EventTarget {
 					this.addEventListener("message", listener);
 					this.socket.send(JSON.stringify(msg));
 				} else {
-					console.log("[Gelamen] Socket is not open yet!");
+					console.log("[GELAMEN] Socket is not open yet!");
 				}
 			} catch(e) {
 				console.log(e);
@@ -129,6 +129,7 @@ export class GelamenClientRequestHandler extends EventTarget {
 					}
 				}
 			}
+			this.dispatchEvent(new CustomEvent("loadAll"));
 			return true;
 		} catch(_e) {
 			return false;
