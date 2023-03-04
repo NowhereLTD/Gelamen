@@ -20,6 +20,7 @@ export class GelamenServerRequestHandler {
 		this.clients = {};
 		this.debug = true;
 		this.run = false;
+		this.secureConnection = options.secureConnection !== null ? options.secureConnection : true;
 		this.objects = {};
 		this.objectCache = {};
 		if(!this.db) {
@@ -29,7 +30,16 @@ export class GelamenServerRequestHandler {
 
 	async listen() {
 		console.log(`${this.name} v${this.version} listen...`);
-		if(this.cert && this.key) {
+		if(this.secureConnection) {
+			// check if cert / key exist or generate new cert / key pair
+			const fileInfo = await Deno.stat("host.key");
+			if(!fileInfo.isFile) {
+				const genRSA = Deno.run({cmd: ["openssl", "genrsa", "4096", ">", "host.key"]});
+				const chmodKey = Deno.run({cmd: ["chmod", "400", "host.key"]});
+				const runOpenSSL = Deno.run({cmd: ["openssl", "req", "-new", "-x509", "-nodes", "-sha256", "-days", "365", "-key", "host.key", "-out", "host.cert"]});
+			}
+			this.cert = "./host.cert";
+			this.key = "./host.key";
 			this.listener = await Deno.listenTls({port: this.port, hostname: this.host, certFile: this.cert, keyFile: this.key});
 		} else {
 			this.listener = await Deno.listen({port: this.port, hostname: this.host});

@@ -1,5 +1,4 @@
 // deno-lint-ignore-file
-import {GelamenClientEntry} from "./GelamenClientEntry.class.js";
 
 export class GelamenClientRequestHandler extends EventTarget {
 	constructor(options = {}) {
@@ -7,7 +6,7 @@ export class GelamenClientRequestHandler extends EventTarget {
 		this.reconnectTime = 5000;
 		this.pingTime = 10000;
 		this.messageCounter = 0;
-		this.url = options.url ? options.url : "ws://localhost:9080";
+		this.url = options.url ? options.url : "wss://localhost:9080";
 		this.objects = {};
 		this.objectCache = {};
 		this.baseClass = options.baseClass ? options.baseClass : PathQLClientEntry;
@@ -20,15 +19,15 @@ export class GelamenClientRequestHandler extends EventTarget {
 	init() {
 		this.socket = new WebSocket(this.url);
 		console.log("try to connect");
-		this.socket.addEventListener("open", async function(_event) {
+		this.socket.addEventListener("open", async (_event) => {
 			const openEvent = new CustomEvent("open");
 			this.dispatchEvent(openEvent);
 			console.log("client connected");
 			await this.ping();
 			resolve(this);
-		}.bind(this));
+		});
 
-		this.socket.addEventListener("message", function(event) {
+		this.socket.addEventListener("message", (event) => {
 			const data = JSON.parse(event.data);
 			if(data.pong) {
 				this.lastPing = Date.now() - data.pong;
@@ -46,21 +45,21 @@ export class GelamenClientRequestHandler extends EventTarget {
 
 			const messageEvent = new CustomEvent("message", {detail: data});
 			this.dispatchEvent(messageEvent);
-		}.bind(this));
+		});
 
-		this.socket.addEventListener("close", function(_event) {
+		this.socket.addEventListener("close", (_event) => {
 			const closeEvent = new CustomEvent("close");
 			this.dispatchEvent(closeEvent);
 			console.log("socket connection closed try to reconnect in " + this.reconnectTime / 1000 + " seconds");
-			setTimeout(function() {
+			setTimeout(() => {
 				console.log("reconnect");
 				this.init();
-			}.bind(this), this.reconnectTime);
-		}.bind(this));
+			}, this.reconnectTime);
+		});
 	}
 
 	send(msg) {
-		return new Promise(function executor(resolve, reject) {
+		return new Promise((resolve, reject) => {
 			try {
 				if(this.socket.readyState === 1) {
 					msg.messageCounter = this.messageCounter;
@@ -83,7 +82,7 @@ export class GelamenClientRequestHandler extends EventTarget {
 				console.log(e);
 				reject(e);
 			}
-		}.bind(this));
+		});
 	}
 
 	async ping() {
@@ -96,9 +95,9 @@ export class GelamenClientRequestHandler extends EventTarget {
 			ping: pingDate
 		});
 
-		setTimeout(async function() {
+		setTimeout(async () => {
 			await this.ping();
-		}.bind(this), this.pingTime);
+		}, this.pingTime);
 	}
 
 	async getAllObjects() {
