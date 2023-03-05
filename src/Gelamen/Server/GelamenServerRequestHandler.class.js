@@ -40,14 +40,18 @@ export class GelamenServerRequestHandler {
 			}
 			this.cert = "./host.cert";
 			this.key = "./host.key";
-			this.listener = await Deno.listenTls({port: this.port, hostname: this.host, certFile: this.cert, keyFile: this.key});
+			this.listener = await Deno.listenTls({port: this.port, hostname: this.host, certFile: this.cert, keyFile: this.key, alpnProtocols: ["h2", "http/1.1"]});
 		} else {
 			this.listener = await Deno.listen({port: this.port, hostname: this.host});
 		}
 		this.run = true;
 
 		while(this.run) {
-			this.handleConnection(await this.listener.accept());
+			try {
+				this.handleConnection(await this.listener.accept());
+			}catch(e) {
+				console.log(e);
+			}
 		}
 	}
 
