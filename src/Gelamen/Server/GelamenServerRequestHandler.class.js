@@ -34,20 +34,24 @@ export class GelamenServerRequestHandler {
 			// check if cert / key exist or generate new cert / key pair
 			const fileInfo = await Deno.stat("host.key");
 			if(!fileInfo.isFile) {
-				const genRSA = Deno.run({cmd: ["openssl", "genrsa", "4096", ">", "host.key"]});
-				const chmodKey = Deno.run({cmd: ["chmod", "400", "host.key"]});
-				const runOpenSSL = Deno.run({cmd: ["openssl", "req", "-new", "-x509", "-nodes", "-sha256", "-days", "365", "-key", "host.key", "-out", "host.cert"]});
+				const _genRSA = Deno.run({cmd: ["openssl", "genrsa", "4096", ">", "host.key"]});
+				const _chmodKey = Deno.run({cmd: ["chmod", "400", "host.key"]});
+				const _runOpenSSL = Deno.run({cmd: ["openssl", "req", "-new", "-x509", "-nodes", "-sha256", "-days", "365", "-key", "host.key", "-out", "host.cert"]});
 			}
 			this.cert = "./host.cert";
 			this.key = "./host.key";
-			this.listener = await Deno.listenTls({port: this.port, hostname: this.host, certFile: this.cert, keyFile: this.key});
+			this.listener = await Deno.listenTls({port: this.port, hostname: this.host, certFile: this.cert, keyFile: this.key, alpnProtocols: ["h2", "http/1.1"]});
 		} else {
 			this.listener = await Deno.listen({port: this.port, hostname: this.host});
 		}
 		this.run = true;
 
 		while(this.run) {
-			this.handleConnection(await this.listener.accept());
+			try {
+				this.handleConnection(await this.listener.accept());
+			}catch(e) {
+				console.log(e);
+			}
 		}
 	}
 
