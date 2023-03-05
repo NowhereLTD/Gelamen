@@ -34,9 +34,9 @@ export class GelamenServerRequestHandler {
 			// check if cert / key exist or generate new cert / key pair
 			const fileInfo = await Deno.stat("host.key");
 			if(!fileInfo.isFile) {
-				const genRSA = Deno.run({cmd: ["openssl", "genrsa", "4096", ">", "host.key"]});
-				const chmodKey = Deno.run({cmd: ["chmod", "400", "host.key"]});
-				const runOpenSSL = Deno.run({cmd: ["openssl", "req", "-new", "-x509", "-nodes", "-sha256", "-days", "365", "-key", "host.key", "-out", "host.cert"]});
+				const _genRSA = Deno.run({cmd: ["openssl", "genrsa", "4096", ">", "host.key"]});
+				const _chmodKey = Deno.run({cmd: ["chmod", "400", "host.key"]});
+				const _runOpenSSL = Deno.run({cmd: ["openssl", "req", "-new", "-x509", "-nodes", "-sha256", "-days", "365", "-key", "host.key", "-out", "host.cert"]});
 			}
 			this.cert = "./host.cert";
 			this.key = "./host.key";
